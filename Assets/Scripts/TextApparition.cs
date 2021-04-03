@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TextApparition : MonoBehaviour
 {
-    public static Text uiIntroTxt;
+#pragma warning disable 0649
+    public static TMP_Text uiIntroTxt;
     [SerializeField] private IEnumerator textScrollCoroutine;
 
     public delegate void Delegate();

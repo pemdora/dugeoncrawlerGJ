@@ -1,17 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class IntroManager : MonoBehaviour
 {
+#pragma warning disable 0649
     private TextApparition textApparition;
     [SerializeField] private List<GameObject> images;
-    [SerializeField] private Text uiIntroTxt;
+    [SerializeField] private TMP_Text uiIntroTxt;
     private List<string> introText;
     [SerializeField] private GameObject imageNext;
     [SerializeField] private GameObject introPanel;
-    [SerializeField] private GameManager gamemanager;
+    private GameManager gamemanager;
 
     public AudioClip IntroMusic;
 

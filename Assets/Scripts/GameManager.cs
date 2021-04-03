@@ -1,19 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+#pragma warning disable 0649
     private TextApparition textApparitionScript;
-    [SerializeField] private GameObject encounterPanel;
-    [SerializeField] private Text merchTxt;
+    [SerializeField] private GameObject pnjPanel;
+    [SerializeField] private TMP_Text merchTxt;
     [SerializeField] private GameObject thoughtPanel;
     [SerializeField] private Dictionary<string, string> answers;
     private bool canInteract = false;
+
     // Start is called before the first frame update
-    [SerializeField] private InputField inputField;
-    [SerializeField] private GameObject pricePanel;
+    [SerializeField] private GameObject inputFieldPanel;
+    [SerializeField] private TMP_InputField inputField;
+    [Header("Level1_PNJ1")]
+    [SerializeField] private GameObject merchPricePanel;
     void Start()
     {
         textApparitionScript = GetComponent<TextApparition>();
@@ -29,7 +34,7 @@ public class GameManager : MonoBehaviour
         answers.Add("dices", "dicesA");
         answers.Add("much", "muchA"); 
         answers.Add("muchA", "Right I'll display the price");
-        encounterPanel.SetActive(true);
+        pnjPanel.SetActive(true);
     }
 
     // Update is called once per frame
@@ -42,7 +47,7 @@ public class GameManager : MonoBehaviour
     {
         thoughtPanel.SetActive(true);
         canInteract= true;
-        inputField.gameObject.SetActive(true);
+        inputFieldPanel.SetActive(true);
     }
 
     public void AnswerText()
@@ -54,10 +59,10 @@ public class GameManager : MonoBehaviour
             string keyA = answers[answer];
             res = answers[keyA];
             if (keyA == "muchA")
-                pricePanel.SetActive(true);
+                merchPricePanel.SetActive(true);
 
         }
         textApparitionScript.DisplayText(res, 0.07f);
-        inputField.text = "";
+        inputField.GetComponent<TMP_InputField>().text = "";
     }
 }
