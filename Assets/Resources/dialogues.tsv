@@ -1,24 +1,24 @@
-ID	Answer ID	Priority	Type of dialogue	Text Delay	Text scroll Speed	Speaker ID	SpeakerName	Condition (type:name/amount)	Required Key	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
-1			Choice dialogue			Seller_1	Shady Seller			Hey you ! Come and have a look to my items !		G_1	
-2	G_1		Thoughts							I might need this guide book.			
-3	G_1		Player_Choice						"guide;book"	I want to buy this book		4	
-4			Answer			Seller_1	Shady Seller			Fine, this guide book cost 100		G_2	
-5	G_2		Player_Choice	0.25				gold:100	yes	Yes	item:guide	10	"2;3;10;7"
-6	G_2		Player_Choice	0.25					no	No		10	
-7	G_2	1	Player_Choice					event:price_unlocked	"price;50"	But the price said it's 50		8	
-8			Answer			Seller_1	Shady Seller			Oh my bad ! You are right it's 50 do you buy it ?		G_2	5
-9	G_2		Player_Choice					gold:50	yes	Yes	item:guide	10	"8;9;3;4;5;6;7"
-10			Choice dialogue							Wanna buy something else ?		G_1	
-11	G_1		Thoughts	1						How much does it cost ?			
-12			Player_Choice						"cost;much"	How much for these ?		13	
-13			Answer			Seller_1	Shady Seller			Right I'll display prices	event:price_unlocked		
-14	G_1		Player_Choice						axe	I want to buy this axe		8	
-15	G_1		Answer			Seller_1	Shady Seller			Oh ! Nice choice, this sturdy axe costs 50		G_3	
-16	G_3		Player_Choice					gold:50	yes	Yes		G_3	
-17	G_3		Player_Choice						no	No	item:axe	0	"14;15;16;17;18"
-18	G_3		Player_Choice						no	No		10	
-19	G_1		Thoughts							Is that a sword cane ?			
-20	G_1		Player_Choice						"cane;sword"	How much for that sword cane ?		21	
-21			Answer			Seller_1	Shady Seller			Oh ! You know how to distinguish good things, it's 70	item:cane_sword	G_4	"19;20;21;22;23"
-22	G_4		Player_Choice					gold:70	yes	Yes			
-23	G_4		Player_Choice						no	No		10	
+ID	SequenceID	Priority	Type of dialogue	Text Delay	Text scroll Speed	Speaker ID	SpeakerName	Condition (type:name/amount)	Required Key	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
+1			Dialogue			Seller_1	Shady Seller			Hey you ! I've never seen your face around ! Are you new to this area ?			
+2			Dialogue							Erm yeah		3	
+3			Dialogue							Are you a dungeon crawler ? What's your name ?	event:player_name	4	
+4			Dialogue			Seller_1	Shady Seller			All right %player_name%, my name is Jeff and you'll need equiments first		5	
+5			Choice_Dialogue			Seller_1	Shady Seller			Come and have a look to my items !		G_1	
+6	G_1	4	Thoughts							I might need this guide <color=red>book</color>			
+7	G_1		Choice_Answer						"guide;book"	I want to buy this book		8	
+8			Answer			Seller_1	Shady Seller			Fine, this guide book cost 100		G_2	
+9	G_2		Choice_Answer	0.25				gold:100	yes	Yes	item:guide	14	"6;7;14;11"
+10	G_2		Choice_Answer	0.25					no	No		14	
+11	G_2	1	Choice_Answer					event:price_unlocked	"price;50"	But the price said it's 50		12	
+12			Answer			Seller_1	Shady Seller			Oh my bad ! You are right it's 50 do you buy it ?		G_2	9
+13	G_2		Choice_Answer					gold:50	yes	Yes	item:guide	14	"12;13;7;8;9;10;11"
+14			Choice_Dialogue							Wanna buy something else ?		G_1	
+15	G_1	1	Thoughts	1						How much does it <color=red>cost</color> ?			
+16			Answer			Seller_1	Shady Seller			Right I'll display prices	event:price_unlocked		
+17			Choice_Answer						"cost;much"	How much for these ?		16	
+18		3	Thoughts							Oh what a nice <color=red>axe</color> !			
+19	G_1		Choice_Answer						axe	I want to buy this axe		8	
+20	G_1		Answer			Seller_1	Shady Seller			Nice choice, this sturdy axe costs 50		G_3	
+21	G_3		Choice_Answer					gold:50	yes	Yes		G_3	
+22	G_3		Choice_Answer						no	No	item:axe		"19;20;21;22;23;"
+23	G_3		Choice_Answer						no	No		14	

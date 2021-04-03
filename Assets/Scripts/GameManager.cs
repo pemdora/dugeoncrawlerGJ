@@ -14,27 +14,38 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Dictionary<string, string> answers;
     private bool canInteract = false;
 
+    private CsvReader csvReader;
+    public List<DialogueData> dialoguesData;
+
     // Start is called before the first frame update
     [SerializeField] private GameObject inputFieldPanel;
     [SerializeField] private TMP_InputField inputField;
     [Header("Level1_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
+    public AudioClip lvl1Music;
+    public enum DIALOGUETYPE { DIALOGUE, CHOICE_DIALOGUE, CHOICE_ANSWER, THOUGHT};
+
     void Start()
     {
+        SoundManager.Instance.PlayMusic(lvl1Music, true);
         textApparitionScript = GetComponent<TextApparition>();
         TextApparition.uiIntroTxt = merchTxt;
         TextApparition.onFinishText += this.OnFinishedText;
-        textApparitionScript.DisplayText("Hi ! Buy me something",0.1f);
-        answers = new Dictionary<string, string>();
-        answers.Add("book", "bookA");
-        answers.Add("bookA", "Nice choice it cost 100");
-        answers.Add("cards", "cardsA");
-        answers.Add("axe", "axeA");
-        answers.Add("sword", "swordA");
-        answers.Add("dices", "dicesA");
-        answers.Add("much", "muchA"); 
-        answers.Add("muchA", "Right I'll display the price");
+
+        //textApparitionScript.DisplayText("Hi ! Buy me something",0.1f);
+        //answers = new Dictionary<string, string>();
+        //answers.Add("book", "bookA");
+        //answers.Add("bookA", "Nice choice it cost 100");
+        //answers.Add("cards", "cardsA");
+        //answers.Add("axe", "axeA");
+        //answers.Add("sword", "swordA");
+        //answers.Add("dices", "dicesA");
+        //answers.Add("much", "muchA"); 
+        //answers.Add("muchA", "Right I'll display the price");
         pnjPanel.SetActive(true);
+
+        csvReader = GetComponent<CsvReader>();
+        csvReader.InitCsvParser(this);
     }
 
     // Update is called once per frame
