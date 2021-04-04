@@ -1,24 +1,28 @@
-ID	SequenceID	Priority	Type of dialogue	Text Delay	Text scroll Speed	Speaker ID	SpeakerName	Condition (type:name/amount)	Required Key	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
-1			Dialogue			Seller_1	Shady Seller			Hey you ! I've never seen your face around ! Are you new to this area ?			
-2			Dialogue							Erm yeah		3	
-3			Dialogue							Are you a dungeon crawler ? What's your name ?	event:player_name	4	
-4			Dialogue			Seller_1	Shady Seller			All right %player_name%, my name is Jeff and you'll need equiments first		5	
-5			Choice_Dialogue			Seller_1	Shady Seller			Come and have a look to my items !		G_1	
-6	G_1	4	Thoughts							I might need this guide <color=red>book</color>			
-7	G_1		Choice_Answer						"guide;book"	I want to buy this book		8	
-8			Answer			Seller_1	Shady Seller			Fine, this guide book cost 100		G_2	
-9	G_2		Choice_Answer	0.25				gold:100	yes	Yes	item:guide	14	"6;7;14;11"
-10	G_2		Choice_Answer	0.25					no	No		14	
-11	G_2	1	Choice_Answer					event:price_unlocked	"price;50"	But the price said it's 50		12	
-12			Answer			Seller_1	Shady Seller			Oh my bad ! You are right it's 50 do you buy it ?		G_2	9
-13	G_2		Choice_Answer					gold:50	yes	Yes	item:guide	14	"12;13;7;8;9;10;11"
-14			Choice_Dialogue							Wanna buy something else ?		G_1	
-15	G_1	1	Thoughts	1						How much does it <color=red>cost</color> ?			
-16			Answer			Seller_1	Shady Seller			Right I'll display prices	event:price_unlocked		
-17			Choice_Answer						"cost;much"	How much for these ?		16	
-18		3	Thoughts							Oh what a nice <color=red>axe</color> !			
-19	G_1		Choice_Answer						axe	I want to buy this axe		8	
-20	G_1		Answer			Seller_1	Shady Seller			Nice choice, this sturdy axe costs 50		G_3	
-21	G_3		Choice_Answer					gold:50	yes	Yes		G_3	
-22	G_3		Choice_Answer						no	No	item:axe		"19;20;21;22;23;"
-23	G_3		Choice_Answer						no	No		14	
+ID	SequenceID	Priority	Type of dialogue	Text Delay	Text scroll delay	Speaker ID	SpeakerName	Requirements (type:name/amount)	Required Input	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
+0			Dialogue	0		Seller_1	Shady Seller			Hey you !<br>I've never seen your face around ! Are you new to this area ?		1	
+1			Dialogue							Erm yeah		2	
+2			Dialogue			Seller_1	Shady Seller			Are you a dungeon crawler ? What's your name ?	event:player_name	3	
+3			Dialogue			Seller_1	Shady Seller			All right %player_name%, my name is Jeff and you'll need equiments first		4	
+4			Choice_Dialogue			Seller_1	Shady Seller			Come and have a look to my items !		G_1	
+5	G_1	4	Thought							I might need this guide <color=red>book</color>			
+6	G_1		Choice_Answer						book	I want to buy this book		7	
+7			Choice_Answer			Seller_1	Shady Seller			Fine, this guide book cost 100		G_2	
+8	G_2		Choice_Answer	0.25				gold:100	yes	Yes	item:guide	13	"5;6;13;10"
+9	G_2		Choice_Answer	0.25					no	No		13	
+10	G_2	1	Choice_Answer					event:price_unlocked	price	But the price said it's 50		11	
+11			Choice_Answer			Seller_1	Shady Seller			Oh my bad ! You are right it's 50 do you buy it ?		G_2	8
+12	G_2		Choice_Answer					gold:50	yes	Yes	item:guide	13	"11;12;6;7;8;9;10"
+13			Choice_Dialogue							Wanna buy something else ?		G_1	
+14	G_1	1	Thought	1						How much does it <color=red>cost</color> ?			
+15			Dialogue			Seller_1	Shady Seller			Right I'll display prices	event:price_unlocked	13	
+16			Choice_Answer						cost	How much for these ?		15	
+17		3	Thought							Oh what a nice <color=red>axe</color> !			
+18	G_1		Choice_Answer						axe	I want to buy this axe		8	
+19	G_1		Choice_Dialogue			Seller_1	Shady Seller			Nice choice, this sturdy axe costs 50		G_3	
+20	G_3		Choice_Answer					gold:50	yes	Yes		G_3	
+21	G_3		Choice_Answer						no	No	item:axe	13	"18;19;20;21"
+22	G_1	2	Thought							Is that a sword cane ?			
+23	G_1		Choice_Answer						sword	How much for that sword cane ?		24	
+24			Choice_Dialogue			Seller_1	Shady Seller			Oh ! You know how to distinguish good things, it's 70	item:cane_sword	G_4	"22;23;24;25;26"
+25	G_4		Choice_Answer					gold:70	yes	Yes			
+26	G_4		Choice_Answer						no	No		13	

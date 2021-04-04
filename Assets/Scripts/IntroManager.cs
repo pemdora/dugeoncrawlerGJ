@@ -33,7 +33,6 @@ public class IntroManager : MonoBehaviour
         introText.Add("A sum you could collect in the Pan's Temple");
 
         textApparition = GetComponent<TextApparition>();
-        TextApparition.uiIntroTxt = uiIntroTxt;
         SetNextIntroDisplay();
         TextApparition.onFinishText += this.OnFinishedText;
         SoundManager.Instance.PlayMusic(IntroMusic,true);
@@ -63,7 +62,7 @@ public class IntroManager : MonoBehaviour
             imageNext.SetActive(false);
             if (index > 0 && index - 1 < images.Count && images[index - 1] != null)
                 images[index - 1].SetActive(false);
-            textApparition.DisplayText(introText[index]);
+            textApparition.DisplayText(uiIntroTxt, introText[index]);
             if (index < images.Count && images[index]!=null)
             {
                 images[index].SetActive(true);

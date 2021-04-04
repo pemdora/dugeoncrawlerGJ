@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -18,13 +19,17 @@ public struct DialogueData
     public string speakerName;
     public string requirements;// TODO CHECK
     public string requiredInput;
-    public string rewards;// TODO CHECK
+    public bool earnedReward;
+    public List<RewardData> rewards;// TODO CHECK
+    public bool specialRef;
     public string text;
     public string nextDialogueID;
     public string deleteDialogueID;// TODO CHECK
+    public bool isDeleted;
 
     public DialogueData(string _id, string _sequenceID, string _priority, string _type, string _delay, string _scrollDelay, string _speakerID, string _speakerName, string _requirements, string _requiredInput, string _text, string _rewards, string _nextDialogueID,string _deleteDialogueID)
     {
+        
         // default data
         id = 0;
         sequenceID = "";
@@ -36,10 +41,14 @@ public struct DialogueData
         speakerName = "";
         requirements = ""; 
         requiredInput = "";
+        specialRef = false;
         text = "";
-        rewards = ""; // TODO CHECK
+        earnedReward = false;
+        rewards = new List<RewardData>(); // TODO CHECK
         nextDialogueID = "";
         deleteDialogueID = "";
+        isDeleted = false;
+
 
         id = ParseToInt(_id,"id");
         sequenceID = _sequenceID;
@@ -60,7 +69,7 @@ public struct DialogueData
                 case "Choice_Answer":
                     type = GameManager.DIALOGUETYPE.CHOICE_ANSWER;
                     break;
-                case "Answer":
+                case "Thought":
                     type = GameManager.DIALOGUETYPE.THOUGHT;
                     break;
                 default:
@@ -78,47 +87,39 @@ public struct DialogueData
         speakerName = _speakerName;
         if (_requirements != "")
         {
-            Regex parser = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-            string[] rawData = parser.Split(_requirements);
-            for (int i = 0; i < rawData.Length; i++)
-            {
-                Regex parser2 = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-                string[] data = parser2.Split(rawData[i]);
-                switch (data[0])
-                {
-                    case "gold":
-                        break;
-                    case "event":
-                        break;
-                    default:
-                        Debug.LogError("Requirement Type not recognize " + _id);
-                        break;
-                }
-            }
+            //Debug.Log("_rewards " + _requirements);
+            //Regex parser = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+            //string[] rawData = parser.Split(_requirements);
+            //for (int i = 0; i < rawData.Length; i++)
+            //{
+            //    Regex parser2 = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+            //    string[] data = parser2.Split(rawData[i]);
+            //    switch (data[0])
+            //    {
+            //        case "gold":
+            //            break;
+            //        case "event":
+            //            break;
+            //        default:
+            //            Debug.LogError("Requirement Type not recognize " + _id);
+            //            break;
+            //    }
+            //}
         }
         requiredInput = _requiredInput;
         text = _text;
-        rewards = _rewards;
-        if (_rewards != "")
+        specialRef = text.Contains("%") ? true : false; 
+         if (_rewards != "")
         {
-            Regex parser = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+            earnedReward = true;
+            Regex parser = new Regex(";");
             string[] rawData = parser.Split(_rewards);
             for (int i = 0; i < rawData.Length; i++)
             {
-                Regex parser2 = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                Regex parser2 = new Regex(":");
                 string[] data = parser2.Split(rawData[i]);
-                switch (data[0])
-                {
-                    case "gold":
-                        break;
-                    case "event":
-                        break;
-                    case "item":
-                        break;
-                    default:
-                        Debug.LogError("Rewards Type not recognize " + _id);
-                        break;
-                }
+                RewardData reward = new RewardData(data[0], data[1]);
+                rewards.Add(reward);
             }
         }
         nextDialogueID = _nextDialogueID;
@@ -140,15 +141,38 @@ public struct DialogueData
     }
     private float ParseToFloat(string stringToparse, string id)
     {
-        bool parseSuccess = float.TryParse(stringToparse, out float result);
+        bool parseSuccess = float.TryParse(stringToparse, NumberStyles.Float, CultureInfo.InvariantCulture, out float result); 
         if (parseSuccess)
         {
             return result;
         }
         else
         {
-            Debug.LogError("Error in parsing to int, " + id + ":" + stringToparse);
+            Debug.LogError("Error in parsing to float, " + id + ":" + stringToparse);
             return 0;
         }
+    }
+}
+public struct RewardData
+{
+    public GameManager.REWARDTYPE type;
+    public string rewardName;
+
+    public RewardData(string _type, string _rewardName)
+    {
+        type = GameManager.REWARDTYPE.ITEM;
+        switch (_type)
+        {
+            case "event":
+                type = GameManager.REWARDTYPE.EVENT;
+                break;
+            case "item":
+                type = GameManager.REWARDTYPE.ITEM;
+                break;
+            default:
+                Debug.LogError("Rewaerd Type not recognize ");
+                break;
+        }
+        rewardName = _rewardName;
     }
 }
