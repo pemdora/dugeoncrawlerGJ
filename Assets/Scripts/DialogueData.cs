@@ -10,7 +10,8 @@ public struct DialogueData
 #pragma warning disable 0649
     public int id;
     public string sequenceID;
-    public int priority;
+    public int thoughtIndex;
+    public int thoughtAnim;
     public GameManager.DIALOGUETYPE type;
     public float delay;
     public float scrollDelay;
@@ -24,19 +25,21 @@ public struct DialogueData
     public bool specialRef;
     public string text;
     public string nextDialogueID;
+    public int failedDialogueID;
     public string deleteDialogueID;// TODO CHECK
     public bool isDeleted;
 
-    public DialogueData(string _id, string _sequenceID, string _priority, string _type, string _delay, string _scrollDelay, string _speakerID, string _speakerName, string _requirements, string _requiredInput, string _text, string _rewards, string _nextDialogueID,string _deleteDialogueID)
+    public DialogueData(string _id, string _sequenceID, string _type, string _thoughsParams,  string _delay, string _scrollDelay, string _speakerID, string _speakerName, string _requirements, string _requiredInput, string _text, string _rewards, string _nextDialogueID, string _failedDialogueID,string _deleteDialogueID)
     {
-        
+
         // default data
-        id = 0;
+    id = 0;
         sequenceID = "";
-        priority = 0;
+        thoughtIndex = -1;
+        thoughtAnim = -1;
         type = GameManager.DIALOGUETYPE.DIALOGUE;
         delay = 0;
-        scrollDelay = 0.07f;
+        scrollDelay = 0.04f;
         speakerID = "";
         speakerName = "";
         requirements = ""; 
@@ -46,13 +49,20 @@ public struct DialogueData
         earnedReward = false;
         rewards = new List<RewardData>(); // TODO CHECK
         nextDialogueID = "";
+        failedDialogueID = -1;
         deleteDialogueID = "";
         isDeleted = false;
 
 
         id = ParseToInt(_id,"id");
         sequenceID = _sequenceID;
-        priority = (_priority!="") ? ParseToInt(_priority, "priority"):0;
+        if (_thoughsParams != "")
+        {
+            Regex parser = new Regex("_");
+            string[] rawData = parser.Split(_thoughsParams);
+            thoughtIndex = ParseToInt(rawData[0], "thoughtIndex");
+            thoughtAnim = ParseToInt(rawData[1], "thoughtAnim");
+        }
         if (_type != "")
         {
             //Regex parser = new Regex(" "); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
@@ -123,6 +133,7 @@ public struct DialogueData
             }
         }
         nextDialogueID = _nextDialogueID;
+        failedDialogueID = (_failedDialogueID != "") ? ParseToInt(_failedDialogueID, "failedDialogueID") : -1;
         deleteDialogueID = _deleteDialogueID;
     }
 

@@ -13,15 +13,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text pnjTxt;
     [SerializeField] private TMP_Text playerTxt;
     [SerializeField] private GameObject thoughtPanel;
-    [SerializeField] private Dictionary<string, string> answers;
-    private bool canInteract = false;
+    private Dictionary<string, DialogueData> answers;
+    private string wrongAnswer;
+    private bool canEndDialogue = false;
+    [SerializeField] private GameObject dialogueFinishedFeedback;
     private int playerGold = 120;
     private string playerName = "";
 
     private CsvReader csvReader;
-    public List<DialogueData> dialoguesData;
+    [HideInInspector] public List<DialogueData> dialoguesData;
 
     // Start is called before the first frame update
+    [SerializeField] private ThoughtManager thoughtManager;
     [SerializeField] private TMP_InputField inputField;
     [Header("Level1_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
@@ -37,17 +40,8 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.PlayMusic(lvl1Music, true);
         textApparitionScript = GetComponent<TextApparition>();
         TextApparition.onFinishText += this.OnFinishedText;
-        //answers = new Dictionary<string, string>();
-        //answers.Add("book", "bookA");
-        //answers.Add("bookA", "Nice choice it cost 100");
-        //answers.Add("cards", "cardsA");
-        //answers.Add("axe", "axeA");
-        //answers.Add("sword", "swordA");
-        //answers.Add("dices", "dicesA");
-        //answers.Add("much", "muchA"); 
-        //answers.Add("muchA", "Right I'll display the price");
+        answers = new Dictionary<string, DialogueData>();
         pnjPanel.SetActive(true);
-
         csvReader = GetComponent<CsvReader>();
         csvReader.InitCsvParser(this);
 
@@ -58,7 +52,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && canInteract)
+        if ((Input.GetMouseButtonDown(0) || Input.anyKeyDown)&& canEndDialogue)
         {
             SetNextAction();
         }
@@ -68,7 +62,7 @@ public class GameManager : MonoBehaviour
     {
         if (!currentDialogue.earnedReward)
         {
-            SetNextDialogue();
+            SetNextSpeech();
         }
         else
         {
@@ -104,35 +98,71 @@ public class GameManager : MonoBehaviour
 
     private void SetNextDialogue()
     {
-        canInteract = false;
+        if (currentDialogue.nextDialogueID != "" && !currentDialogue.isDeleted)
+        {
+            bool parseSuccess = int.TryParse(currentDialogue.nextDialogueID, out int result);
+            if (parseSuccess)
+            {
+                currentDialogue = dialoguesData[result];
+                Debug.Log("SetNextDialogue" + currentDialogue.text + currentDialogue.nextDialogueID);
+                DisplayCurrentText();
+            }
+            else
+            {
+                Debug.LogError("Error in parsing nextDialogueID to int, id = " + currentDialogue.id);
+            }
+        }
+        else
+            Debug.LogError("no dialogue after");
+    }
+
+    private void DisplayCurrentText()
+    {
+        canEndDialogue = false;
+        dialogueFinishedFeedback.SetActive(false);
+        TMP_Text uiText = currentDialogue.speakerID != "" ? pnjTxt : playerTxt;
+        uiText.gameObject.SetActive(true);
+        string text = currentDialogue.specialRef ? ReplaceRefInText(currentDialogue.text) : currentDialogue.text;
+        textApparitionScript.DisplayText(uiText, text, currentDialogue.scrollDelay);
+    }
+
+    private void SetNextSpeech()
+    {
         switch (currentDialogue.type)
         {
             case DIALOGUETYPE.DIALOGUE:
-                if (currentDialogue.nextDialogueID != "" && !currentDialogue.isDeleted){
-                        bool parseSuccess = int.TryParse(currentDialogue.nextDialogueID, out int result);
-                        if (parseSuccess)
-                        {
-                            currentDialogue = dialoguesData[result];
-                            TMP_Text uiText = dialoguesData[result].speakerID != "" ? pnjTxt : playerTxt;
-                            string text = currentDialogue.specialRef ? ReplaceRefInText(currentDialogue.text) : currentDialogue.text;
-                            textApparitionScript.DisplayText(uiText, text, currentDialogue.scrollDelay);
-                        }
-                        else
-                        {
-                            Debug.LogError("Error in parsing nextDialogueID to int, id = " + currentDialogue.id);
-                        }
-                }
-                else
-                    Debug.LogError("no dialogue after");
+                SetNextDialogue();
                 break;
             case DIALOGUETYPE.CHOICE_DIALOGUE:
+                // init choice panels
+                inputField.gameObject.SetActive(true);
+                thoughtPanel.SetActive(true);
+                answers.Clear();
+
                 IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == currentDialogue.nextDialogueID);
+                // wrong answer text
+                IEnumerable<DialogueData> query2 = dialoguesData.Where(dialogueData => dialogueData.sequenceID == "Wrong_Input");
+                if (query2.Count() > 0)
+                    wrongAnswer = query2.First().text;
+                else
+                    Debug.LogError("Missing wrong answer");
+
                 foreach (DialogueData entry in query)
                 {
-                    Debug.Log("entry " + entry.text);
+                    if (entry.type == DIALOGUETYPE.THOUGHT)
+                    {
+                        thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
+                    }
+                    else if(entry.type == DIALOGUETYPE.CHOICE_ANSWER){
+                        answers.Add(entry.requiredInput,entry);
+                    }
                 }
+
                 break;
-            default: Debug.LogError("text type not recognized");
+            case DIALOGUETYPE.CHOICE_ANSWER:
+                SetNextDialogue();
+                break;
+            default: Debug.LogError("text type not recognized "+ currentDialogue.type);
                 break;
         }
     }
@@ -140,7 +170,8 @@ public class GameManager : MonoBehaviour
     public void OnFinishedText()
     {
        // thoughtPanel.SetActive(true);
-        canInteract= true;
+        canEndDialogue= true;
+        dialogueFinishedFeedback.SetActive(true);
     }
 
     public void AnswerText()
@@ -155,19 +186,29 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
-        //string answer = (inputField.text).ToLower();
-        //string res = "I didn't understand";
-        //if (answers.ContainsKey(answer))
-        //{
-        //    string keyA = answers[answer];
-        //    res = answers[keyA];
-        //    if (keyA == "muchA")
-        //        merchPricePanel.SetActive(true);
+        else
+        {
+            string answer = (inputField.text).ToLower();
 
-        //}
-        //textApparitionScript.DisplayText(res, 0.07f);
-        //inputField.GetComponent<TMP_InputField>().text = "";
-        inputField.gameObject.SetActive(false);
+            if (answers.ContainsKey(answer))
+            {
+                // input validated
+                currentDialogue = answers[answer];
+                DisplayCurrentText();
+
+                // close input panel
+                inputField.GetComponent<TMP_InputField>().text = "";
+                inputField.gameObject.SetActive(false);
+                thoughtPanel.SetActive(false);
+                answers.Clear();
+            }
+            else
+            {
+                textApparitionScript.DisplayText(pnjTxt, wrongAnswer);
+                inputField.GetComponent<TMP_InputField>().text = "";
+            }
+
+        }
     }
 
     private string ReplaceRefInText(string text)

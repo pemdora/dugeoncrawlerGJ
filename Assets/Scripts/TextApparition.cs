@@ -15,7 +15,7 @@ public class TextApparition : MonoBehaviour
     [SerializeField] private bool fastScrollDebug;
 
 
-    public void DisplayText(TMP_Text _uiText, string strComplete,float time= 0.07F)
+    public void DisplayText(TMP_Text _uiText, string strComplete,float time= 0.04F)
     {
         if (_uiText == null)
         {
