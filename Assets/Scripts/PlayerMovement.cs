@@ -20,26 +20,43 @@ public class PlayerMovement : MonoBehaviour
         float movmentFowrdBackWard = Input.GetAxis("Vertical");
         float movmentRotate = Input.GetAxis("Rotate");
 
+        Vector3 fwd = transform.TransformDirection(Vector3.forward);
+        bool canMoveForward = true;
+        bool canMoveBackward = true;
+        Vector3 right = transform.TransformDirection(Vector3.right);
+        bool canMoveRight = true;
+        bool canMoveLeft = true;
+
+        if (Physics.Raycast(transform.position, fwd, 1))
+            canMoveForward = false;
+        if (Physics.Raycast(transform.position, -fwd, 1))
+            canMoveBackward = false;
+
+        if (Physics.Raycast(transform.position, right, 1))
+            canMoveRight = false;
+        if (Physics.Raycast(transform.position, -right, 1))
+            canMoveLeft = false;
+
         if (CanMove)
         {
-            if (movmentFowrdBackWard > 0)
+            if (movmentFowrdBackWard > 0 && canMoveForward)
             {
                 moveCoroutine = Move(1, 0);
                 StartCoroutine(moveCoroutine);
             }
-            else if (movmentFowrdBackWard < 0)
+            else if (movmentFowrdBackWard < 0 && canMoveBackward)
             {
                 moveCoroutine = Move(-1, 0);
                 StartCoroutine(moveCoroutine);
             }
-            else if (movmentLeftRight > 0)
+            else if (movmentLeftRight > 0 && canMoveRight)
             {
-                moveCoroutine = Move(0,-1);
+                moveCoroutine = Move(0,1);
                 StartCoroutine(moveCoroutine);
             }
-            else if (movmentLeftRight < 0)
+            else if (movmentLeftRight < 0 && canMoveLeft)
             {
-                moveCoroutine = Move(0, 1);
+                moveCoroutine = Move(0, -1);
                 StartCoroutine(moveCoroutine);
             }
             else if (movmentRotate > 0)
@@ -62,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         // animate the position of the game object...
        
         Vector3 startPos = new Vector3(transform.position.x, 0, transform.position.z);
-        Vector3 finalPos = startPos + transform.right * _x + transform.forward * _z;
+        Vector3 finalPos = startPos + transform.forward * _x + transform.right * _z;
 
         while (t <= 1.0f)
         {
