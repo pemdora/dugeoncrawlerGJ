@@ -1,36 +1,36 @@
-ID	SequenceID	Type of dialogue	Thought index : Thought anim index	Text Delay	Text scroll delay	Speaker ID	SpeakerName	Requirements (type:name/amount)	Required Input	Text	Reward (type:name/amount)	Next DialogueID	Failed Next DialogueID	Delete DialogueID
+ID	SequenceID	Type of dialogue	Thought index : Thought anim index	Text Delay	Text scroll delay	Speaker ID	SpeakerName	Requirements (type:name/amount)	Requi#f78686 Input	Text	Reward (type:name/amount)	Next DialogueID	Failed Next DialogueID	Delete DialogueID
 0		Choice_Dialogue				Seller_1	Shady Seller			Hey you !<br>I've never seen your face around ! Are you new to this area ?		G_0		
-1	G_0	Thought	0_0							Type <color=green>yes</color> or <color=red>no</color>				
+1	G_0	Thought	0_0							Type <color=#f78686>yes</color> or <color=#f78686>no</color>				
 2	G_0	Choice_Answer							yes	Yes		4		
 3	G_0	Choice_Answer							no	No		4		
 4		Dialogue				Seller_1	Shady Seller			Are you a dungeon crawler ? What's your name ?	event:player_name	5		
 5		Dialogue				Seller_1	Shady Seller			All right %player_name%, my name is Jeff and you'll need equiments first		6		
 6		Choice_Dialogue				Seller_1	Shady Seller			Come and have a look to my items !		G_1		
-7	G_1	Thought	0_0	0						This <color=red>book</color> looks very interesting and usefull				
+7	G_1	Thought	0_0	0						This <color=#f78686>book</color> looks very interesting and usefull				
 8	G_1	Choice_Answer							book	I want to buy this book		9		
 9		Choice_Dialogue				Seller_1	Shady Seller			Fine, this guide book cost 100		G_2		
-10	G_2	Thought	0_0							<color=green>yes</color> or <color=red>no</color> ?				
+10	G_2	Thought	0_0							<color=#f78686>yes</color> or <color=#f78686>no</color> ?				
 11	G_2	Choice_Answer		0.25				gold:100	yes	Yes	item:guide	18		"7;8;18;13"
 12	G_2	Choice_Answer		0.25					no	No		18		
-13	G_2	Thought	0_1					event:price_unlocked		But the <color=green>price</color> said it's 50				
+13	G_2	Thought	0_1					event:price_unlocked		But the <color=#f78686>price</color> said it's 50				
 14	G_2	Choice_Answer						event:price_unlocked	price			15		
 15		Choice_Dialogue				Seller_1	Shady Seller			Oh my bad ! You are right it's 50 do you buy it ?		G_2		11
 16	G_2	Choice_Answer						gold:50	yes	Yes	item:guide	18		"15;16;8;9;10;11;12;13"
 17		Choice_Dialogue								Who do you think I am? Are you trying to steal from me?		G_1		
-18		Choice_Dialogue								Wanna buy something else ?		G_1		
-19	G_1	Thought	3_1	3						How much does it <color=red>cost</color> ?				
+18		Choice_Dialogue				Seller_1	Shady Seller			Wanna buy something else ?		G_1		
+19	G_1	Thought	3_1	3						How much does it <color=#f78686>cost</color> ?				
 20		Dialogue				Seller_1	Shady Seller			Right I'll display prices	event:price_unlocked	18		
 21		Choice_Answer							cost	How much for these ?		20		
-22	G_1	Thought	1_2	1						Oh what a nice <color=red>axe</color> !				
+22	G_1	Thought	1_2	1						Oh what a nice <color=#f78686>axe</color> !				
 23	G_1	Choice_Answer							axe	I want to buy this axe		8		
 24	G_1	Choice_Dialogue				Seller_1	Shady Seller			Nice choice, this sturdy axe costs 50		G_3		
-25	G_3	Thought	0_0							<color=green>yes</color> or <color=red>no</color> ?				
+25	G_3	Thought	0_0							<color=#f78686>yes</color> or <color=#f78686>no</color> ?				
 26	G_3	Choice_Answer						gold:50	yes	Yes	item:axe	G_3		
 27	G_3	Choice_Answer							no	No		18		"23;24;25;26;27"
-28	G_1	Thought	2_0	2						Is that a <color=red>sword</color> cane ?				
+28	G_1	Thought	2_0	2						Is that a <color=#f78686>sword</color> cane ?				
 29	G_1	Choice_Answer							sword	How much for that sword cane ?		30		
 30		Choice_Dialogue				Seller_1	Shady Seller			Oh ! You know how to distinguish good things, it's 70		G_4		
-31	G_4	Thought	0_0							<color=green>yes</color> or <color=red>no</color> ?				
+31	G_4	Thought	0_0							<color=#f78686>yes</color> or <color=#f78686>no</color> ?				
 32	G_4	Choice_Answer						gold:70	yes	Yes	item:cane_sword			"28;29;30;31;32;33"
 33	G_4	Choice_Answer							no	No		18		
 34	Wrong_Input	Dialogue								Huh ?				

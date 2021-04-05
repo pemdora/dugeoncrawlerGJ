@@ -55,6 +55,11 @@ public class ThoughtManager : MonoBehaviour
     {
         for (int i = 0; i < thoughtParents.Count; i++)
         {
+            if (thoughtCoroutines[i] != null)
+            {
+                StopCoroutine(thoughtCoroutines[i]);
+                thoughtCoroutines[i] = null;
+            }
             if (thoughtParents[i].activeSelf)
                 FadeOut(i);
         }

@@ -14,7 +14,7 @@ public class SoundManager : MonoBehaviour
 
 	// Singleton instance.
 	public static SoundManager Instance = null;
-
+	private IEnumerator fadeOutCoroutine;
 	// Initialize the singleton instance.
 	private void Awake()
 	{
@@ -43,17 +43,30 @@ public class SoundManager : MonoBehaviour
 	// Play a single clip through the music source.
 	public void PlayMusic(AudioClip clip,bool isLoop)
 	{
+		StartCoroutine(StartMusic(clip,isLoop));
+	}
+
+	public IEnumerator StartMusic(AudioClip clip, bool isLoop)
+	{
+		while (fadeOutCoroutine!=null)
+		{
+			yield return null;
+		}
+		MusicSource.volume=1;
 		MusicSource.clip = clip;
 		MusicSource.loop = isLoop;
 		MusicSource.Play();
+		yield break;
 	}
+
 
 	public void FadeOutMusic(float duration, float targetVolume)
 	{
-		StartCoroutine(StartFade(MusicSource,duration,targetVolume));
+		fadeOutCoroutine = StartFade(MusicSource,duration,targetVolume);
+		StartCoroutine(fadeOutCoroutine);
 	}
 
-	public static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
+	public IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
 	{
 		float currentTime = 0;
 		float start = audioSource.volume;
@@ -65,6 +78,7 @@ public class SoundManager : MonoBehaviour
 			yield return null;
 		}
 		audioSource.Stop();
+		fadeOutCoroutine = null;
 		yield break;
 	}
 
