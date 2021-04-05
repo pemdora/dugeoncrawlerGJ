@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,39 +9,49 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 #pragma warning disable 0649
+
     private TextApparition textApparitionScript;
+    private CsvReader csvReader;
+
     [SerializeField] private GameObject pnjPanel;
     [SerializeField] private TMP_Text pnjTxt;
     [SerializeField] private TMP_Text playerTxt;
+
     [SerializeField] private GameObject thoughtPanel;
-    private Dictionary<string, DialogueData> answers;
-    private string wrongAnswer;
-    private bool canEndDialogue = false;
-    [SerializeField] private GameObject dialogueFinishedFeedback;
-    private int playerGold = 120;
-    private string playerName = "";
-
-    private CsvReader csvReader;
-    [HideInInspector] public List<DialogueData> dialoguesData;
-    [Header("DEBUG")]
-    [SerializeField] private int currentIndex;
-
-
-    // Start is called before the first frame update
     [SerializeField] private ThoughtManager thoughtManager;
+
     [SerializeField] private TMP_InputField inputField;
     private bool hasInputOpened;
-    [Header("Level1_PNJ1")]
+
+    [HideInInspector] public List<DialogueData> dialoguesData;
+    private Dictionary<string, DialogueData> answers; // possible answers that player can answer
+    private string wrongAnswer;
+    private bool canPassNextDialogue = false;
+    [SerializeField] private GameObject dialogueFinishedFeedback;
+
+    [Header("LevelTuto_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
+
+    // ENUM DATA
     public enum DIALOGUETYPE { DIALOGUE, CHOICE_DIALOGUE, CHOICE_ANSWER, THOUGHT };
     private DialogueData currentDialogue;
-    public enum REWARDTYPE { EVENT, ITEM };
+    public enum REWARDTYPE { EVENT, ITEM , STACKABLE_EVENT, GOLD};
     public enum EVENTTYPE { none, player_name };
     private EVENTTYPE eventType;
 
+    [Header("Player Data")]
+    private string playerName = "";
+    [SerializeField] private int playerGold = 120;
+    [SerializeField] private TMP_Text playerGoldTxtAmount;
+    private List<string> stackableEventRewards;
+
+    [Header("DEBUG")]
+    [SerializeField] private int currentDialogueIndex;
+
     void Start()
     {
+        stackableEventRewards = new List<string>();
         SoundManager.Instance.PlayMusic(lvl1Music, true);
         textApparitionScript = GetComponent<TextApparition>();
         TextApparition.onFinishText += this.OnFinishedText;
@@ -49,14 +60,16 @@ public class GameManager : MonoBehaviour
         csvReader = GetComponent<CsvReader>();
         csvReader.InitCsvParser(this);
 
-        SetDialogueIndex(currentIndex);
+        SetDialogueIndex(currentDialogueIndex);
         textApparitionScript.DisplayText(pnjTxt,currentDialogue.text, currentDialogue.scrollDelay);
+
+        UpdatePlayerGold(0);
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if ((Input.GetMouseButtonDown(0) || Input.anyKeyDown)&& canEndDialogue)
+        if ((Input.GetMouseButtonDown(0) || Input.anyKeyDown)&& canPassNextDialogue)
         {
             SetNextAction();
         }
@@ -69,7 +82,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Invalid index");
             return;
         }
-        currentIndex = i;
+        currentDialogueIndex = i;
         currentDialogue = dialoguesData[i];
     }
 
@@ -81,7 +94,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("currentDialogue.earnedReward" + currentDialogue.earnedReward);
             SetReward();
         }
     }
@@ -90,22 +102,40 @@ public class GameManager : MonoBehaviour
     {
         foreach (RewardData reward in currentDialogue.rewards)
         {
-            if (reward.type == REWARDTYPE.ITEM)
+            switch (reward.type)
             {
-                // TODO PANEL ITEM
-            }
-            if (reward.type == REWARDTYPE.EVENT)
-            {
-                switch (reward.rewardName)
-                {
-                    case "player_name":
-                        eventType = EVENTTYPE.player_name;
-                        SetInputField(true);
-                        break;
-                    default:
-                        Debug.LogError("Event not recognize "+reward.rewardName);
+                case REWARDTYPE.ITEM:
+                    Debug.LogError("TYPE not recognize ");
+                    // TODO PANEL ITEM
                     break;
-                }
+                case REWARDTYPE.EVENT:
+                    switch (reward.stringValue)
+                    {
+                        case "player_name":
+                            eventType = EVENTTYPE.player_name;
+                            SetInputField(true);
+                            break;
+                        default:
+                            Debug.LogError("EVENT not recognize " + reward.stringValue);
+                            break;
+                    }
+                    break;
+                case REWARDTYPE.STACKABLE_EVENT:
+                    switch (reward.stringValue)
+                    {
+                        case "price_unlocked":
+                            merchPricePanel.SetActive(true);
+                            stackableEventRewards.Add("price_unlocked");
+                            break;
+                        default:
+                            Debug.LogError("STACKABLE_EVENT not recognize " + reward.stringValue);
+                            break;
+                    }
+                    SetNextSpeech();
+                    break;
+                default:
+                    Debug.LogError("TYPE not recognize ");
+                    break;
             }
         }
         
@@ -138,18 +168,21 @@ public class GameManager : MonoBehaviour
 
     private void DisplayCurrentText()
     {
-        canEndDialogue = false;
+        canPassNextDialogue = false;
         dialogueFinishedFeedback.SetActive(false);
         TMP_Text uiText = currentDialogue.speakerID != "" ? pnjTxt : playerTxt;
         uiText.gameObject.SetActive(true);
         string text = currentDialogue.specialRef ? ReplaceRefInText(currentDialogue.text) : currentDialogue.text;
         textApparitionScript.DisplayText(uiText, text, currentDialogue.scrollDelay);
-        Debug.Log("currentDialogue "+ currentDialogue.text);
     }
 
     private void SetNextSpeech()
     {
-        Debug.Log("SetNextSpeech");
+        if (currentDialogue.isDeleted)
+        {
+            Debug.LogError("Current Dialogue is deleted and shouldn't");
+        }
+
         switch (currentDialogue.type)
         {
             case DIALOGUETYPE.DIALOGUE:
@@ -157,7 +190,6 @@ public class GameManager : MonoBehaviour
                 break;
             case DIALOGUETYPE.CHOICE_DIALOGUE:
                 // init choice panels
-                Debug.Log("CHOICE_DIALOGUE "+currentDialogue.text);
                 dialogueFinishedFeedback.SetActive(false);
                 SetInputField(true);
                 answers.Clear();
@@ -172,22 +204,104 @@ public class GameManager : MonoBehaviour
 
                 foreach (DialogueData entry in query)
                 {
-                    if (entry.type == DIALOGUETYPE.THOUGHT)
+                    if (entry.isDeleted)
                     {
-                        thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
+                        Debug.Log(entry.text + " isDeleted");
+                        continue;
                     }
-                    else if(entry.type == DIALOGUETYPE.CHOICE_ANSWER){
-                        answers.Add(entry.requiredInput,entry);
+                    else
+                    {
+                        if (entry.type == DIALOGUETYPE.THOUGHT)
+                        {
+                            // only add if requirements meets
+                            if(IsRequirementsOk(entry.requirements, entry.id))
+                                thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
+                        }
+                        else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
+                        {
+                            // only add if requirements meets
+                            bool keyExists = answers.ContainsKey(entry.requiredInput);
+                            if (keyExists)
+                            {
+                                DialogueData oldValue = answers[entry.requiredInput];
+                                DialogueData newValue = entry;
+                                if (newValue.choicePriority>oldValue.choicePriority && IsRequirementsOk(newValue.requirements, newValue.id))
+                                {
+                                    answers[entry.requiredInput] = newValue;
+                                    Debug.Log("Replace current choice answer with "+ newValue.text);
+                                }
+                            }
+                            else
+                            {
+                                answers.Add(entry.requiredInput, entry);
+                            }
+
+                        }
                     }
                 }
 
                 break;
             case DIALOGUETYPE.CHOICE_ANSWER:
-                Debug.Log("CHOICE_ANSWER");
                 SetNextDialogue();
                 break;
             default: Debug.LogError("text type not recognized "+ currentDialogue.type);
                 break;
+        }
+    }
+
+    public bool IsRequirementsOk(string requirements,int dialogueID)
+    {
+        bool result = false;
+        // Parse requirements string
+        if (requirements != "")
+        {
+            Regex parser = new Regex("/"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+            string[] requirementsArray = parser.Split(requirements);
+
+            // Parcours every requirement
+            for (int i = 0; i < requirementsArray.Length; i++)
+            {
+                Regex parser2 = new Regex(":"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                string[] data = parser2.Split(requirementsArray[i]);
+                string type = data[0].Replace("\"", "");
+                string value = data[1].Replace("\"", "");
+
+                bool localRequirement = false;
+                switch (type) // type
+                {
+                    case "gold":
+                        if (playerGold >= ParseToInt(value, dialogueID)) localRequirement = true;
+                        break;
+                    case "stackable_event":
+                        if (stackableEventRewards.Count > 0 && stackableEventRewards.Contains(value))
+                            localRequirement = true;
+                        else
+                            Debug.Log("requirement : missing stackable_event " + value);
+                        break;
+                    default:
+                        Debug.LogError("Requirement Type " + type + " not recognize for dialog " + dialogueID);
+                        break;
+                }
+
+                if (i == 0) result = localRequirement;
+                else result = result && localRequirement;
+            }
+        }
+        else result = true;
+        return result;
+    }
+
+    private int ParseToInt(string stringToparse, int id)
+    {
+        bool parseSuccess = int.TryParse(stringToparse, out int result);
+        if (parseSuccess)
+        {
+            return result;
+        }
+        else
+        {
+            Debug.LogError("Error in parsing to int, " + id + " : " + stringToparse);
+            return 0;
         }
     }
 
@@ -196,7 +310,7 @@ public class GameManager : MonoBehaviour
        // thoughtPanel.SetActive(true);
         if (!hasInputOpened)
         {
-            canEndDialogue = true;
+            canPassNextDialogue = true;
             dialogueFinishedFeedback.SetActive(true);
         }
     }
@@ -205,7 +319,7 @@ public class GameManager : MonoBehaviour
     {
         if (value)
         {
-            canEndDialogue = false;
+            canPassNextDialogue = false;
             playerTxt.gameObject.SetActive(false);
             dialogueFinishedFeedback.SetActive(false);
             inputField.gameObject.SetActive(true);
@@ -243,7 +357,7 @@ public class GameManager : MonoBehaviour
             {
                 // input validated
                 currentDialogue = answers[answer];
-                currentIndex = currentDialogue.id;
+                currentDialogueIndex = currentDialogue.id;
                 DisplayCurrentText();
 
                 // close input panel
@@ -299,5 +413,12 @@ public class GameManager : MonoBehaviour
             }
         }
         return result;
+    }
+
+    // Player Data
+    private void UpdatePlayerGold(int valueToAdd)
+    {
+        playerGold += valueToAdd;
+        playerGoldTxtAmount.text = playerGold.ToString();
     }
 }

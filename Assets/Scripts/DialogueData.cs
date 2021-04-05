@@ -10,9 +10,12 @@ public struct DialogueData
 #pragma warning disable 0649
     public int id;
     public string sequenceID;
+    public GameManager.DIALOGUETYPE type;
+
+    public int choicePriority; // highest is more important
     public int thoughtIndex;
     public int thoughtAnim;
-    public GameManager.DIALOGUETYPE type;
+
     public float delay;
     public float scrollDelay;
 
@@ -25,19 +28,19 @@ public struct DialogueData
     public bool specialRef;
     public string text;
     public string nextDialogueID;
-    public int failedDialogueID;
     public string deleteDialogueID;// TODO CHECK
     public bool isDeleted;
 
-    public DialogueData(string _id, string _sequenceID, string _type, string _thoughsParams,  string _delay, string _scrollDelay, string _speakerID, string _speakerName, string _requirements, string _requiredInput, string _text, string _rewards, string _nextDialogueID, string _failedDialogueID,string _deleteDialogueID)
+    public DialogueData(string _id, string _sequenceID, string _type, string _choiceParam, string _thoughsParams,  string _delay, string _scrollDelay, string _speakerID, string _speakerName, string _requirements, string _requiredInput, string _text, string _rewards, string _nextDialogueID,string _deleteDialogueID)
     {
 
         // default data
-    id = 0;
+        id = 0;
         sequenceID = "";
+        type = GameManager.DIALOGUETYPE.DIALOGUE;
+        choicePriority = 0;
         thoughtIndex = -1;
         thoughtAnim = -1;
-        type = GameManager.DIALOGUETYPE.DIALOGUE;
         delay = 0;
         scrollDelay = 0.01f;
         speakerID = "";
@@ -49,13 +52,13 @@ public struct DialogueData
         earnedReward = false;
         rewards = new List<RewardData>(); // TODO CHECK
         nextDialogueID = "";
-        failedDialogueID = -1;
         deleteDialogueID = "";
         isDeleted = false;
 
 
         id = ParseToInt(_id,"id");
         sequenceID = _sequenceID;
+        choicePriority = (_choiceParam != "") ? ParseToInt(_choiceParam, "choicePriority") : 0;
         if (_thoughsParams != "")
         {
             Regex parser = new Regex("_");
@@ -95,45 +98,27 @@ public struct DialogueData
         scrollDelay = (_scrollDelay != "") ? ParseToFloat(_scrollDelay, "scrollDelay") : 0.07f;
         speakerID = _speakerID;
         speakerName = _speakerName;
-        if (_requirements != "")
-        {
-            //Debug.Log("_rewards " + _requirements);
-            //Regex parser = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-            //string[] rawData = parser.Split(_requirements);
-            //for (int i = 0; i < rawData.Length; i++)
-            //{
-            //    Regex parser2 = new Regex(";"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-            //    string[] data = parser2.Split(rawData[i]);
-            //    switch (data[0])
-            //    {
-            //        case "gold":
-            //            break;
-            //        case "event":
-            //            break;
-            //        default:
-            //            Debug.LogError("Requirement Type not recognize " + _id);
-            //            break;
-            //    }
-            //}
-        }
+        requirements = _requirements;
         requiredInput = _requiredInput;
         text = _text;
         specialRef = text.Contains("%") ? true : false; 
          if (_rewards != "")
         {
             earnedReward = true;
-            Regex parser = new Regex(";");
+            Regex parser = new Regex("/");
             string[] rawData = parser.Split(_rewards);
             for (int i = 0; i < rawData.Length; i++)
             {
                 Regex parser2 = new Regex(":");
                 string[] data = parser2.Split(rawData[i]);
-                RewardData reward = new RewardData(data[0], data[1]);
+                string type = data[0].Replace("\"", "");
+                string value = data[1].Replace("\"", "");
+                RewardData reward = new RewardData(type, value);
                 rewards.Add(reward);
             }
         }
         nextDialogueID = _nextDialogueID;
-        failedDialogueID = (_failedDialogueID != "") ? ParseToInt(_failedDialogueID, "failedDialogueID") : -1;
+        //failedDialogueID = (_failedDialogueID != "") ? ParseToInt(_failedDialogueID, "failedDialogueID") : -1;
         deleteDialogueID = _deleteDialogueID;
     }
 
@@ -167,7 +152,7 @@ public struct DialogueData
 public struct RewardData
 {
     public GameManager.REWARDTYPE type;
-    public string rewardName;
+    public string stringValue;
 
     public RewardData(string _type, string _rewardName)
     {
@@ -180,10 +165,16 @@ public struct RewardData
             case "item":
                 type = GameManager.REWARDTYPE.ITEM;
                 break;
+            case "gold":
+                type = GameManager.REWARDTYPE.GOLD;
+                break;
+            case "stackable_event":
+                type = GameManager.REWARDTYPE.STACKABLE_EVENT;
+                break; 
             default:
-                Debug.LogError("Rewaerd Type not recognize ");
+                Debug.LogError("Reward Type "+ _type + " not recognize ");
                 break;
         }
-        rewardName = _rewardName;
+        stringValue = _rewardName;
     }
 }

@@ -36,7 +36,7 @@ public class ThoughtManager : MonoBehaviour
             StartCoroutine(thoughtCoroutines[i]);
         }
         else
-            Debug.LogWarning("thoughtCoroutines " + i + " is already be used " + text);
+            Debug.LogWarning("thoughtCoroutines " + i + " is already be used ");
     }
 
     private IEnumerator StartFadeIn(int i, int animIndex, float delay, string text)
