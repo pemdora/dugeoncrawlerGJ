@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: fbd1ca8b3b1e74e44a9496398c608ab6
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Komika Display
+  fontNames:
+  - Komika Display
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 28c4ac27637af4eb88c4fffc66539673, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
