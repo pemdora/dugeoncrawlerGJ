@@ -25,12 +25,12 @@ ID	SequenceID	Type of dialogue	Thought index : Thought anim index	Text Delay	Tex
 23	G_1	Choice_Answer							axe	I want to buy this axe		8		
 24	G_1	Choice_Dialogue				Seller_1	Shady Seller			Nice choice, this sturdy axe costs 50		G_3		
 25	G_3	Thought	0_0							<color=green>yes</color> or <color=red>no</color> ?				
-26	G_3	Choice_Answer						gold:50	yes	Yes		G_3		
-27	G_3	Choice_Answer							no	No	item:axe	18		"23;24;25;26;27"
-28	G_1	Thought	2_0	2						Is that a sword cane ?				
+26	G_3	Choice_Answer						gold:50	yes	Yes	item:axe	G_3		
+27	G_3	Choice_Answer							no	No		18		"23;24;25;26;27"
+28	G_1	Thought	2_0	2						Is that a <color=red>sword</color> cane ?				
 29	G_1	Choice_Answer							sword	How much for that sword cane ?		30		
-30		Choice_Dialogue				Seller_1	Shady Seller			Oh ! You know how to distinguish good things, it's 70	item:cane_sword	G_4		"28;29;30;31;32;33"
+30		Choice_Dialogue				Seller_1	Shady Seller			Oh ! You know how to distinguish good things, it's 70		G_4		
 31	G_4	Thought	0_0							<color=green>yes</color> or <color=red>no</color> ?				
-32	G_4	Choice_Answer						gold:70	yes	Yes				
+32	G_4	Choice_Answer						gold:70	yes	Yes	item:cane_sword			"28;29;30;31;32;33"
 33	G_4	Choice_Answer							no	No		18		
 34	Wrong_Input	Dialogue								Huh ?				

@@ -39,7 +39,7 @@ public struct DialogueData
         thoughtAnim = -1;
         type = GameManager.DIALOGUETYPE.DIALOGUE;
         delay = 0;
-        scrollDelay = 0.04f;
+        scrollDelay = 0.01f;
         speakerID = "";
         speakerName = "";
         requirements = ""; 

@@ -7,6 +7,7 @@ public class ThoughtManager : MonoBehaviour
 {
     [SerializeField] private List<GameObject> thoughtParents;
     private List<IEnumerator> thoughtCoroutines;
+    private int maxFloatAnim =3;
 
     public void Start()
     {
@@ -43,7 +44,40 @@ public class ThoughtManager : MonoBehaviour
         thoughtParents[i].GetComponentInChildren<TMP_Text>().text = text;
         yield return new WaitForSeconds(delay);
         thoughtParents[i].SetActive(true);
-        thoughtParents[i].GetComponent<Animator>().SetTrigger("floatAnim" + animIndex);
+        thoughtParents[i].GetComponent<Animator>().SetBool("FadeOut", false);
+
+        thoughtParents[i].GetComponent<Animator>().SetBool("FadeIn", true);
+        thoughtParents[i].GetComponent<Animator>().SetBool("FloatAnim" + animIndex,true);
         thoughtCoroutines[i] = null;
+    }
+
+    public void FadeOutAllThoughts()
+    {
+        for (int i = 0; i < thoughtParents.Count; i++)
+        {
+            if (thoughtParents[i].activeSelf)
+                FadeOut(i);
+        }
+    }
+
+    public void FadeOut(int i)
+    {
+        if (i == -1)
+        {
+            Debug.LogError("Index are not correct");
+            return;
+        }
+        if (i >= thoughtParents.Count)
+        {
+            Debug.LogError("Thought index is too hight " + i);
+            return;
+        }
+        thoughtParents[i].GetComponent<Animator>().SetBool("FadeIn", false);
+        for (int j = 0; j < maxFloatAnim; j++)
+        {
+            thoughtParents[i].GetComponent<Animator>().SetBool("FloatAnim" + j, false);
+        }
+
+        thoughtParents[i].GetComponent<Animator>().SetBool("FadeOut", true);
     }
 }

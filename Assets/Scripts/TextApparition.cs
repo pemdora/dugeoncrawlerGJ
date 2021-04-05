@@ -12,6 +12,7 @@ public class TextApparition : MonoBehaviour
 
     public delegate void Delegate();
     public static event Delegate onFinishText;
+    [Header("DEBUG")]
     [SerializeField] private bool fastScrollDebug;
 
 

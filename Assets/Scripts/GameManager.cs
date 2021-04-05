@@ -22,10 +22,14 @@ public class GameManager : MonoBehaviour
 
     private CsvReader csvReader;
     [HideInInspector] public List<DialogueData> dialoguesData;
+    [Header("DEBUG")]
+    [SerializeField] private int currentIndex;
+
 
     // Start is called before the first frame update
     [SerializeField] private ThoughtManager thoughtManager;
     [SerializeField] private TMP_InputField inputField;
+    private bool hasInputOpened;
     [Header("Level1_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
@@ -45,7 +49,7 @@ public class GameManager : MonoBehaviour
         csvReader = GetComponent<CsvReader>();
         csvReader.InitCsvParser(this);
 
-        currentDialogue = dialoguesData[0];
+        SetDialogueIndex(currentIndex);
         textApparitionScript.DisplayText(pnjTxt,currentDialogue.text, currentDialogue.scrollDelay);
     }
 
@@ -58,6 +62,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SetDialogueIndex(int i)
+    {
+        if (i>=dialoguesData.Count)
+        {
+            Debug.LogError("Invalid index");
+            return;
+        }
+        currentIndex = i;
+        currentDialogue = dialoguesData[i];
+    }
+
     private void SetNextAction()
     {
         if (!currentDialogue.earnedReward)
@@ -66,6 +81,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("currentDialogue.earnedReward" + currentDialogue.earnedReward);
             SetReward();
         }
     }
@@ -84,8 +100,7 @@ public class GameManager : MonoBehaviour
                 {
                     case "player_name":
                         eventType = EVENTTYPE.player_name;
-                        playerTxt.gameObject.SetActive(false);
-                        inputField.gameObject.SetActive(true);
+                        SetInputField(true);
                         break;
                     default:
                         Debug.LogError("Event not recognize "+reward.rewardName);
@@ -96,20 +111,25 @@ public class GameManager : MonoBehaviour
         
     }
 
+
     private void SetNextDialogue()
     {
-        if (currentDialogue.nextDialogueID != "" && !currentDialogue.isDeleted)
+        if (currentDialogue.nextDialogueID != "")
         {
             bool parseSuccess = int.TryParse(currentDialogue.nextDialogueID, out int result);
             if (parseSuccess)
             {
-                currentDialogue = dialoguesData[result];
-                Debug.Log("SetNextDialogue" + currentDialogue.text + currentDialogue.nextDialogueID);
-                DisplayCurrentText();
+                if (!dialoguesData[result].isDeleted)
+                {
+                    SetDialogueIndex(result);
+                    DisplayCurrentText();
+                }
+                else
+                    Debug.LogError("no dialogue after");
             }
             else
             {
-                Debug.LogError("Error in parsing nextDialogueID to int, id = " + currentDialogue.id);
+                Debug.LogError("Error in parsing " + currentDialogue.nextDialogueID + " to int, id = " + currentDialogue.id);
             }
         }
         else
@@ -124,10 +144,12 @@ public class GameManager : MonoBehaviour
         uiText.gameObject.SetActive(true);
         string text = currentDialogue.specialRef ? ReplaceRefInText(currentDialogue.text) : currentDialogue.text;
         textApparitionScript.DisplayText(uiText, text, currentDialogue.scrollDelay);
+        Debug.Log("currentDialogue "+ currentDialogue.text);
     }
 
     private void SetNextSpeech()
     {
+        Debug.Log("SetNextSpeech");
         switch (currentDialogue.type)
         {
             case DIALOGUETYPE.DIALOGUE:
@@ -135,8 +157,9 @@ public class GameManager : MonoBehaviour
                 break;
             case DIALOGUETYPE.CHOICE_DIALOGUE:
                 // init choice panels
-                inputField.gameObject.SetActive(true);
-                thoughtPanel.SetActive(true);
+                Debug.Log("CHOICE_DIALOGUE "+currentDialogue.text);
+                dialogueFinishedFeedback.SetActive(false);
+                SetInputField(true);
                 answers.Clear();
 
                 IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == currentDialogue.nextDialogueID);
@@ -160,6 +183,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case DIALOGUETYPE.CHOICE_ANSWER:
+                Debug.Log("CHOICE_ANSWER");
                 SetNextDialogue();
                 break;
             default: Debug.LogError("text type not recognized "+ currentDialogue.type);
@@ -170,8 +194,31 @@ public class GameManager : MonoBehaviour
     public void OnFinishedText()
     {
        // thoughtPanel.SetActive(true);
-        canEndDialogue= true;
-        dialogueFinishedFeedback.SetActive(true);
+        if (!hasInputOpened)
+        {
+            canEndDialogue = true;
+            dialogueFinishedFeedback.SetActive(true);
+        }
+    }
+
+    private void SetInputField(bool value)
+    {
+        if (value)
+        {
+            canEndDialogue = false;
+            playerTxt.gameObject.SetActive(false);
+            dialogueFinishedFeedback.SetActive(false);
+            inputField.gameObject.SetActive(true);
+            thoughtPanel.SetActive(true);
+            hasInputOpened = true;
+        }
+        else
+        {
+            inputField.GetComponent<TMP_InputField>().text = "";
+            inputField.gameObject.SetActive(false);
+            thoughtManager.FadeOutAllThoughts();
+            hasInputOpened = false;
+        }
     }
 
     public void AnswerText()
@@ -183,6 +230,8 @@ public class GameManager : MonoBehaviour
                 case EVENTTYPE.player_name:
                     playerName = inputField.text;
                     SetNextDialogue();
+                    SetInputField(false);
+                    eventType = EVENTTYPE.none;
                     break;
             }
         }
@@ -194,12 +243,11 @@ public class GameManager : MonoBehaviour
             {
                 // input validated
                 currentDialogue = answers[answer];
+                currentIndex = currentDialogue.id;
                 DisplayCurrentText();
 
                 // close input panel
-                inputField.GetComponent<TMP_InputField>().text = "";
-                inputField.gameObject.SetActive(false);
-                thoughtPanel.SetActive(false);
+                SetInputField(false);
                 answers.Clear();
             }
             else
