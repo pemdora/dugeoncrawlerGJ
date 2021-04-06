@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    private bool CanMove;
+    [HideInInspector] public bool CanMove;
     private IEnumerator moveCoroutine;
     private GameObject hitFwrdObject;
 
@@ -15,43 +15,43 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float movmentLeftRight = Input.GetAxis("Horizontal");
-        float movmentFowrdBackWard = Input.GetAxis("Vertical");
-        float movmentRotate = Input.GetAxis("Rotate");
-
-        Vector3 fwd = transform.TransformDirection(Vector3.forward);
-        bool canMoveForward = true;
-        bool canMoveBackward = true;
-        Vector3 right = transform.TransformDirection(Vector3.right);
-        bool canMoveRight = true;
-        bool canMoveLeft = true;
-        RaycastHit forwardHit;
-
-        if (Physics.Raycast(transform.position, fwd, out forwardHit, 1))
-        {
-            canMoveForward = false;
-            if (hitFwrdObject != forwardHit.collider.gameObject)
-            {
-                GameManager.instance.CheckInteraction(forwardHit.collider.gameObject);
-                hitFwrdObject = forwardHit.collider.gameObject;
-            }
-        }
-        else
-        {
-            GameManager.instance.NoInteraction();
-            hitFwrdObject = null;
-        }
-
-        if (Physics.Raycast(transform.position, -fwd, 1))
-            canMoveBackward = false;
-
-        if (Physics.Raycast(transform.position, right, 1))
-            canMoveRight = false;
-        if (Physics.Raycast(transform.position, -right, 1))
-            canMoveLeft = false;
-
         if (CanMove)
         {
+            float movmentLeftRight = Input.GetAxis("Horizontal");
+            float movmentFowrdBackWard = Input.GetAxis("Vertical");
+            float movmentRotate = Input.GetAxis("Rotate");
+
+            Vector3 fwd = transform.TransformDirection(Vector3.forward);
+            bool canMoveForward = true;
+            bool canMoveBackward = true;
+            Vector3 right = transform.TransformDirection(Vector3.right);
+            bool canMoveRight = true;
+            bool canMoveLeft = true;
+            RaycastHit forwardHit;
+
+            if (Physics.Raycast(transform.position, fwd, out forwardHit, 1))
+            {
+                canMoveForward = false;
+                if (hitFwrdObject != forwardHit.collider.gameObject)
+                {
+                    GameManager.instance.CheckInteraction(forwardHit.collider.gameObject);
+                    hitFwrdObject = forwardHit.collider.gameObject;
+                }
+            }
+            else
+            {
+                GameManager.instance.NoInteraction();
+                hitFwrdObject = null;
+            }
+
+            if (Physics.Raycast(transform.position, -fwd, 1))
+                canMoveBackward = false;
+
+            if (Physics.Raycast(transform.position, right, 1))
+                canMoveRight = false;
+            if (Physics.Raycast(transform.position, -right, 1))
+                canMoveLeft = false;
+
             if (movmentFowrdBackWard > 0 && canMoveForward)
             {
                 moveCoroutine = Move(1, 0);

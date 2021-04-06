@@ -2212,6 +2212,7 @@ MonoBehaviour:
   lvl1Music: {fileID: 8300000, guid: 946c840ebae1e1141a7492664ddf0a26, type: 3}
   playerGold: 40
   playerGoldTxtAmount: {fileID: 1910777854}
+  playerController: {fileID: 1018488074}
   currentDialogueIndex: 6
 --- !u!4 &152573271
 Transform:
@@ -6448,6 +6449,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 630673991}
   m_Mesh: {fileID: 1453043773871479701, guid: 453461e5a8aca41efb4485ff9629e9c3, type: 3}
+--- !u!21 &631124662
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hidden/OutlinePlus
+  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
+  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors: []
 --- !u!1 &637614437
 GameObject:
   m_ObjectHideFlags: 0
@@ -9558,7 +9584,7 @@ MonoBehaviour:
   maxDepthThreshold: 0.25
   minNormalsThreshold: 0
   maxNormalsThreshold: 0.25
-  material: {fileID: 1291156851}
+  material: {fileID: 631124662}
 --- !u!1 &964737592
 GameObject:
   m_ObjectHideFlags: 0
@@ -10634,6 +10660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b04731528b1493b418ebb83acf6f9093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanMove: 0
 --- !u!1 &1030125960
 GameObject:
   m_ObjectHideFlags: 0
@@ -12971,31 +12998,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1290968218}
   m_Mesh: {fileID: 1453043773871479701, guid: 453461e5a8aca41efb4485ff9629e9c3, type: 3}
---- !u!21 &1291156851
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Hidden/OutlinePlus
-  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
-  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats: []
-    m_Colors: []
 --- !u!1 &1292100196
 GameObject:
   m_ObjectHideFlags: 0
@@ -23290,7 +23292,7 @@ PrefabInstance:
     - target: {fileID: 2235180014988120520, guid: e3645f11e357cb64586596ca1bbc1623,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -8.039978
+      value: -8.039917
       objectReference: {fileID: 0}
     - target: {fileID: 2235180014988120520, guid: e3645f11e357cb64586596ca1bbc1623,
         type: 3}
@@ -23368,6 +23370,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PressToConitnue
+      objectReference: {fileID: 0}
+    - target: {fileID: 2493255254900407818, guid: 17717717686ddcb48a0eb79356d8dd22,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2493255254900407819, guid: 17717717686ddcb48a0eb79356d8dd22,
         type: 3}
@@ -23474,6 +23481,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2493255255772329784, guid: 17717717686ddcb48a0eb79356d8dd22,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 6bf333e6fb795b247b5dd24be252d0a4, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17717717686ddcb48a0eb79356d8dd22, type: 3}
 --- !u!33 &2703255647249115706
@@ -23821,7 +23833,7 @@ PrefabInstance:
     - target: {fileID: 6082649106413259798, guid: ec7c4327d51bd0f4e97aa0c09d47619a,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1.0999756
+      value: 1.0998535
       objectReference: {fileID: 0}
     - target: {fileID: 6082649106413259798, guid: ec7c4327d51bd0f4e97aa0c09d47619a,
         type: 3}

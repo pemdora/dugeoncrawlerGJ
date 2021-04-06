@@ -54,8 +54,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int playerGold = 120;
     [SerializeField] private TMP_Text playerGoldTxtAmount;
     private List<string> stackableEventRewards;
+    [SerializeField] private PlayerController playerController;
 
-    [Header("DEBUG")]
+     [Header("DEBUG")]
     [SerializeField] private int currentDialogueIndex;
     public static GameManager instance;
 
@@ -505,12 +506,17 @@ public class GameManager : MonoBehaviour
 
     public void StartInteraction()
     {
+        feedbackCanDialogue.SetActive(false);
         playerState = interactableNextState;
         switch (playerState)
         {
             case PLAYERSTATE.IN_DIALOGUE:
+                playerController.CanMove = false;
                 Debug.Log(interactableObject.GetComponent<NPCController>().DialogueFileName);
                 StartDialogue();
+                break;
+            case PLAYERSTATE.IN_EXPLORATION:
+                playerController.CanMove = true;
                 break;
             default:
                 Debug.LogError("Missing PLAYERSTATE INTERACTION");
