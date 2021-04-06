@@ -5044,6 +5044,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 480403221}
   m_Mesh: {fileID: 1453043773871479701, guid: 453461e5a8aca41efb4485ff9629e9c3, type: 3}
+--- !u!21 &499308424
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hidden/OutlinePlus
+  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
+  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors: []
 --- !u!1 &511350142
 GameObject:
   m_ObjectHideFlags: 0
@@ -9797,7 +9822,7 @@ MonoBehaviour:
   maxDepthThreshold: 0.25
   minNormalsThreshold: 0
   maxNormalsThreshold: 0.25
-  material: {fileID: 1233687076}
+  material: {fileID: 499308424}
 --- !u!1 &964737592
 GameObject:
   m_ObjectHideFlags: 0
@@ -12406,7 +12431,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'I might need this guide <color=red>book</color> '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 076519f2fd8df7745be399f4d2976f29, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e34609cf88c74fc4aa8688fff9ca503c, type: 2}
   m_sharedMaterial: {fileID: 2331814144272863215, guid: c2650c16a1c02ef458e9a03f88febfc4,
     type: 2}
   m_fontSharedMaterials: []
@@ -12756,31 +12781,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1230246808}
   m_Mesh: {fileID: 8733429697405204941, guid: 453461e5a8aca41efb4485ff9629e9c3, type: 3}
---- !u!21 &1233687076
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Hidden/OutlinePlus
-  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
-  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats: []
-    m_Colors: []
 --- !u!1 &1240721364
 GameObject:
   m_ObjectHideFlags: 0
@@ -15506,7 +15506,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1474012629
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18824,7 +18824,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: gfcgh
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e34609cf88c74fc4aa8688fff9ca503c, type: 2}
   m_sharedMaterial: {fileID: 5384226353769192536, guid: e34609cf88c74fc4aa8688fff9ca503c,
@@ -18894,13 +18894,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1737627680}
-    characterCount: 0
+    characterCount: 5
     spriteCount: 0
     spaceCount: 0
-    wordCount: 0
+    wordCount: 1
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -23452,7 +23452,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: How much does it <color=red>cost</color> ?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 076519f2fd8df7745be399f4d2976f29, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e34609cf88c74fc4aa8688fff9ca503c, type: 2}
   m_sharedMaterial: {fileID: 2331814144272863215, guid: c2650c16a1c02ef458e9a03f88febfc4,
     type: 2}
   m_fontSharedMaterials: []
@@ -23571,7 +23571,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Oh what a nice <color=red>axe</color> !
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 076519f2fd8df7745be399f4d2976f29, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e34609cf88c74fc4aa8688fff9ca503c, type: 2}
   m_sharedMaterial: {fileID: 2331814144272863215, guid: c2650c16a1c02ef458e9a03f88febfc4,
     type: 2}
   m_fontSharedMaterials: []
@@ -23756,7 +23756,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Is that a <color=red>sword</color> cane ?
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 076519f2fd8df7745be399f4d2976f29, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e34609cf88c74fc4aa8688fff9ca503c, type: 2}
   m_sharedMaterial: {fileID: 2331814144272863215, guid: c2650c16a1c02ef458e9a03f88febfc4,
     type: 2}
   m_fontSharedMaterials: []
@@ -24686,7 +24686,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -7.200012, y: -84.09999}
+  m_AnchoredPosition: {x: -7.199951, y: -84.099976}
   m_SizeDelta: {x: 44.299988, y: 18.339996}
   m_Pivot: {x: 1, y: 1}
 --- !u!1 &5859709328152926179
