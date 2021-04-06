@@ -5,8 +5,6 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     public bool CanMove;
-    private Vector3 playerVelocity;
-    private float playerSpeed = 2.0f;
     private IEnumerator moveCoroutine;
 
     private void Start()
