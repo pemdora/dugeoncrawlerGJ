@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
     private List<string> stackableEventRewards;
     [SerializeField] private PlayerController playerController;
     private bool isBookOpen = false;
-    private bool hasBook = false;
+    private bool hasBook = true;
     [SerializeField] private GameObject bookPanel;
 
     [Header("DEBUG")]
