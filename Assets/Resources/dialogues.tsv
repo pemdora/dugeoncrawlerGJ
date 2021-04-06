@@ -1,5 +1,5 @@
 ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought anim index	Text Delay	Text scroll delay	Speaker ID	SpeakerName	"Requirements (type:name/amount;type:name/amount)"	Required Input	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
-0		Choice_Dialogue					Seller_1	Jeff the merchant			Hey you !<br>I've never seen your face around ! Are you new to this area ?		G_0	
+0		Choice_Dialogue					Seller_1	Jeff the merchant			Hey you !<br>I've never seen your face around !<br>Are you new to this area ?		G_0	
 1	G_0	Thought		0_0							Type <color=red>yes</color> or <color=red>no</color>			
 2	G_0	Choice_Answer								yes	Yes		4	
 3	G_0	Choice_Answer								no	No		4	
@@ -23,7 +23,7 @@ ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought an
 21	G_1	Choice_Answer								much	How much for these ?		22	
 22		Choice_Dialogue					Seller_1	Jeff the merchant			Right I'll display prices	stackable_event:price_unlocked	G_1	
 23	G_1	Thought		1_2	1						Oh what a nice <color=red>axe</color> !			
-24	G_1	Choice_Answer								axe	I want to buy this axe		8	
+24	G_1	Choice_Answer								axe	I want to buy this axe		25	
 25	G_1	Choice_Dialogue					Seller_1	Jeff the merchant			Nice choice, this sturdy axe costs 50		G_3	
 26	G_3	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
 27	G_3	Choice_Answer								yes	Yes		18	

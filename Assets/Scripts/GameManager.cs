@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private TMP_InputField inputField;
     private bool hasInputFieldOpened;
+    private bool inputFieldWriting = false;
 
     [HideInInspector] public List<DialogueData> dialoguesData;
     private Dictionary<string, DialogueData> answers; // possible answers that player can answer
@@ -44,7 +46,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
 
-    public enum PLAYERSTATE { IN_EXPLORATION,IN_DIALOGUE };
+    public enum PLAYERSTATE { IN_EXPLORATION, IN_DIALOGUE };
     private PLAYERSTATE playerState;
     private GameObject interactableObject;
     private PLAYERSTATE interactableNextState;
@@ -55,8 +57,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TMP_Text playerGoldTxtAmount;
     private List<string> stackableEventRewards;
     [SerializeField] private PlayerController playerController;
+    private bool isBookOpen = false;
+    private bool hasBook = false;
+    [SerializeField] private GameObject bookPanel;
 
-     [Header("DEBUG")]
+    [Header("DEBUG")]
     [SerializeField] private int currentDialogueIndex;
     public static GameManager instance;
 
@@ -105,13 +110,23 @@ public class GameManager : MonoBehaviour
                     if (hasInputFieldOpened)
                     {
                         inputField.Select();
+                        OnSelectnputField();
                     }
+                }
+                else if (Input.GetKeyDown(KeyCode.B) && hasBook && !inputFieldWriting)
+                {
+                    Debug.Log("inputFieldWriting"+ inputFieldWriting);
+                    InteractBook();
                 }
                 break;
             case PLAYERSTATE.IN_EXPLORATION:
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     StartInteraction();
+                }
+                if (Input.GetKeyDown(KeyCode.B) && hasBook)
+                {
+                    InteractBook();
                 }
                 break;
             default:
@@ -126,12 +141,12 @@ public class GameManager : MonoBehaviour
         // Display first dialogue
         pnjPanel.SetActive(true);
         SetDialogueIndex(currentDialogueIndex);
-        textApparitionScript.DisplayText(pnjTxt,currentDialogue.text, currentDialogue.scrollDelay);
+        textApparitionScript.DisplayText(pnjTxt, currentDialogue.text, currentDialogue.scrollDelay);
     }
 
     private void SetDialogueIndex(int i)
     {
-        if (i>=dialoguesData.Count)
+        if (i >= dialoguesData.Count)
         {
             Debug.LogError("Invalid index");
             return;
@@ -192,7 +207,7 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
-        
+
     }
 
 
@@ -268,7 +283,7 @@ public class GameManager : MonoBehaviour
                         if (entry.type == DIALOGUETYPE.THOUGHT)
                         {
                             // only add if requirements meets
-                            if(IsRequirementsOk(entry.requirements, entry.id))
+                            if (IsRequirementsOk(entry.requirements, entry.id))
                                 thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
                         }
                         else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
@@ -279,10 +294,10 @@ public class GameManager : MonoBehaviour
                             {
                                 DialogueData oldValue = answers[entry.requiredInput];
                                 DialogueData newValue = entry;
-                                if (newValue.choicePriority>oldValue.choicePriority && IsRequirementsOk(newValue.requirements, newValue.id))
+                                if (newValue.choicePriority > oldValue.choicePriority && IsRequirementsOk(newValue.requirements, newValue.id))
                                 {
                                     answers[entry.requiredInput] = newValue;
-                                    Debug.Log("Replace current choice answer with "+ newValue.text);
+                                    Debug.Log("Replace current choice answer with " + newValue.text);
                                 }
                             }
                             else
@@ -298,12 +313,12 @@ public class GameManager : MonoBehaviour
             case DIALOGUETYPE.CHOICE_ANSWER:
                 SetNextDialogue();
                 break;
-            default: Debug.LogError("text type not recognized "+ currentDialogue.type);
+            default: Debug.LogError("text type not recognized " + currentDialogue.type);
                 break;
         }
     }
 
-    public bool IsRequirementsOk(string requirements,int dialogueID)
+    public bool IsRequirementsOk(string requirements, int dialogueID)
     {
         bool result = false;
         // Parse requirements string
@@ -361,7 +376,7 @@ public class GameManager : MonoBehaviour
 
     public void OnFinishedText()
     {
-       // thoughtPanel.SetActive(true);
+        // thoughtPanel.SetActive(true);
         if (!hasInputFieldOpened)
         {
             canPassNextDialogue = true;
@@ -375,10 +390,10 @@ public class GameManager : MonoBehaviour
         {
             canPassNextDialogue = false;
             playerTxt.gameObject.SetActive(false);
-            dialogueFinishedFeedback.SetActive(false);
             inputField.gameObject.SetActive(true);
             thoughtPanel.SetActive(true);
             hasInputFieldOpened = true;
+            dialogueFinishedFeedback.SetActive(true);
         }
         else
         {
@@ -386,7 +401,19 @@ public class GameManager : MonoBehaviour
             inputField.gameObject.SetActive(false);
             thoughtManager.FadeOutAllThoughts();
             hasInputFieldOpened = false;
+            EventSystem.current.SetSelectedGameObject(null);
         }
+    }
+
+    public void OnSelectnputField()
+    {
+        dialogueFinishedFeedback.SetActive(false);
+        inputFieldWriting = true;
+    }
+
+    public void OnDeSelectnputField()
+    {
+        inputFieldWriting = false;
     }
 
 
@@ -397,7 +424,12 @@ public class GameManager : MonoBehaviour
             switch (eventType)
             {
                 case EVENTTYPE.player_name:
-                    playerName = inputField.text;
+                    string playerStr = (inputField.text).ToLower();
+                    playerStr = playerStr.Replace("my", "");
+                    playerStr = playerStr.Replace("name", "");
+                    playerStr = playerStr.Replace("is", "");
+                    playerStr = playerStr.Replace(" ", "");
+                    playerName = playerStr.First().ToString().ToUpper() + playerStr.Substring(1);
                     SetNextDialogue();
                     SetInputField(false);
                     eventType = EVENTTYPE.none;
@@ -407,7 +439,7 @@ public class GameManager : MonoBehaviour
         else
         {
             string answer = (inputField.text).ToLower();
-            answer.Replace(" ", "");
+            answer = answer.Trim(); // Remove white space before and after / Replace(" ", "");
 
             if (answers.ContainsKey(answer))
             {
@@ -521,6 +553,22 @@ public class GameManager : MonoBehaviour
             default:
                 Debug.LogError("Missing PLAYERSTATE INTERACTION");
                 break;
+        }
+    }
+
+    private void InteractBook()
+    {
+        isBookOpen = !isBookOpen;
+        bookPanel.SetActive(isBookOpen);
+        if (isBookOpen)
+        {
+            if (playerState == PLAYERSTATE.IN_EXPLORATION)
+                playerController.CanMove = false;
+        }
+        else
+        {
+            if (playerState == PLAYERSTATE.IN_EXPLORATION)
+                playerController.CanMove = true;
         }
     }
 }

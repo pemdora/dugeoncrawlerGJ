@@ -18,6 +18,13 @@ public class NPCController : MonoBehaviour
         //StartCoroutine(moveCoroutine);
     }
 
+    private void Update()
+    {
+        Quaternion q = Camera.main.transform.parent.rotation;
+        q.eulerAngles = new Vector3(0, q.eulerAngles.y, 0);
+        transform.rotation = q;
+    }
+
     private IEnumerator Move(int _x, int _z)
     {
         CanMove = false;

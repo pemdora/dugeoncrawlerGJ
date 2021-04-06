@@ -8,11 +8,25 @@ public class PlayerController : MonoBehaviour
     private IEnumerator moveCoroutine;
     private GameObject hitFwrdObject;
 
+    public static PlayerController instance;
+
+    void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
     private void Start()
     {
         CanMove = true;
     }
-
+    public float lookSpeed = 0.05f;
+    private Vector2 rotation = Vector2.zero;
     private void FixedUpdate()
     {
         if (CanMove)
@@ -82,6 +96,19 @@ public class PlayerController : MonoBehaviour
                 moveCoroutine = Rotate(-1);
                 StartCoroutine(moveCoroutine);
             }
+
+            //Vector3 mouse = Input.mousePosition;
+            //Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(new Vector3(
+            //                                                    mouse.x,
+            //                                                    mouse.y,
+            //                                                    transform.position.y));
+            //Vector3 forward = mouseWorld - Camera.main.transform.position;
+            //Camera.main.transform.rotation = Quaternion.LookRotation(forward*Time.deltaTime*0.01f, Vector3.up);
+            rotation.y += Input.GetAxis("Mouse X");
+            rotation.x += -Input.GetAxis("Mouse Y");
+            rotation.x = Mathf.Clamp(rotation.x, -10f, 10f);
+            rotation.y = Mathf.Clamp(rotation.y, -7, 7f);
+            Camera.main.transform.localRotation = Quaternion.Euler(rotation.x * lookSpeed, rotation.y * lookSpeed, 0);
         }
     }
 
