@@ -72,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private IEnumerator Move(float _x,float _z)
+    private IEnumerator Move(int _x,int _z)
     {
         CanMove = false;
         float t = 0.0f;
@@ -80,7 +80,8 @@ public class PlayerMovement : MonoBehaviour
        
         Vector3 startPos = new Vector3(transform.position.x, 0, transform.position.z);
         Vector3 finalPos = startPos + transform.forward * _x + transform.right * _z;
-
+        finalPos.x = (int)Mathf.Round(finalPos.x); // prevent float approx
+        finalPos.z = (int)Mathf.Round(finalPos.z);
         while (t <= 1.0f)
         {
             // .. and increase the t interpolater
@@ -96,14 +97,13 @@ public class PlayerMovement : MonoBehaviour
         }
         CanMove = true;
     }
-    private IEnumerator Rotate(float _x)
+    private IEnumerator Rotate(int _x)
     {
         CanMove = false;
         float t = 0.0f;
         // animate the position of the game object...
-        Quaternion startRot = transform.rotation;// Quaternion.Euler(transform.rotation.x, transform.rotation.y, transform.rotation.z);
-        Quaternion finalRot = startRot*Quaternion.Euler(0, transform.rotation.y + 90 *_x, 0);
-
+        Quaternion startRot = transform.rotation;
+        Quaternion finalRot = startRot * Quaternion.Euler(0, 90 * _x, 0);
         while (t <= 1.0f)
         {
             // .. and increase the t interpolater
