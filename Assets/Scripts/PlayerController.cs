@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    public bool CanMove;
+    private bool CanMove;
     private IEnumerator moveCoroutine;
+    private GameObject hitFwrdObject;
 
     private void Start()
     {
@@ -24,9 +25,23 @@ public class PlayerMovement : MonoBehaviour
         Vector3 right = transform.TransformDirection(Vector3.right);
         bool canMoveRight = true;
         bool canMoveLeft = true;
+        RaycastHit forwardHit;
 
-        if (Physics.Raycast(transform.position, fwd, 1))
+        if (Physics.Raycast(transform.position, fwd, out forwardHit, 1))
+        {
             canMoveForward = false;
+            if (hitFwrdObject != forwardHit.collider.gameObject)
+            {
+                GameManager.instance.CheckInteraction(forwardHit.collider.gameObject);
+                hitFwrdObject = forwardHit.collider.gameObject;
+            }
+        }
+        else
+        {
+            GameManager.instance.NoInteraction();
+            hitFwrdObject = null;
+        }
+
         if (Physics.Raycast(transform.position, -fwd, 1))
             canMoveBackward = false;
 

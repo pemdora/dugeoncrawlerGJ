@@ -30,14 +30,11 @@ public class CsvReader : MonoBehaviour
         Regex CSVParser = new Regex("\t"); // (",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 
         // Skip 1st line
-        if ((line = reader.ReadLine()) != null)
-        {
-        }
+        if ((line = reader.ReadLine()) != null)     {        }
 
         // Read file until end of file
         while ((line = reader.ReadLine()) != null) // Foreach lines in the document
         {
-            //Debug.Log(line);
             //Separating columns to array
             string[] rowData = CSVParser.Split(line);
             if (rowData[0] == "")
@@ -48,21 +45,6 @@ public class CsvReader : MonoBehaviour
             //Debug.Log(line);
             DialogueData dialogue = new DialogueData(rowData[0], rowData[1], rowData[2], rowData[3], rowData[4], rowData[5], rowData[6], rowData[7], rowData[8], rowData[9], rowData[10], rowData[11], rowData[12], rowData[13], rowData[14]);
             manager.dialoguesData.Add(dialogue);
-
-            //DataObject tempObject = new DataObject(rowData[0], rowData[1], rowData[2], rowData[3], rowData[4], rowData[5], rowData[6]);
-            //// Debug.Log("rowData 6 " + rowData[6]);
-            //if (int.Parse(rowData[0]) == compteur)
-            //{
-            //    dialogueSequenceTemp.Add(tempObject); // first column is the key name
-            //}
-            //else
-            //{
-            //    allDialogues.Add(dialogueSequenceTemp);
-            //    dialogueSequenceTemp = new List<DataObject>();
-            //    dialogueSequenceTemp.Add(tempObject);
-            //    compteur++;
-            //}
-
         }
     }
 

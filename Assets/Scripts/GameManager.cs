@@ -9,9 +9,13 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 #pragma warning disable 0649
+    #region Dialogue
+    // visual feedbacks
+    [SerializeField] private GameObject feedbackCanDialogue;
+    [SerializeField] private GameObject dialogueFinishedFeedback;
 
-    private TextApparition textApparitionScript;
-    private CsvReader csvReader;
+    [SerializeField] private TextApparition textApparitionScript;
+    [SerializeField] private CsvReader csvReader;
 
     [SerializeField] private GameObject pnjPanel;
     [SerializeField] private TMP_Text pnjTxt;
@@ -21,24 +25,29 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ThoughtManager thoughtManager;
 
     [SerializeField] private TMP_InputField inputField;
-    private bool hasInputOpened;
+    private bool hasInputFieldOpened;
 
     [HideInInspector] public List<DialogueData> dialoguesData;
     private Dictionary<string, DialogueData> answers; // possible answers that player can answer
     private string wrongAnswer;
     private bool canPassNextDialogue = false;
-    [SerializeField] private GameObject dialogueFinishedFeedback;
+
+    // ENUM DATA
+    public enum DIALOGUETYPE { DIALOGUE, CHOICE_DIALOGUE, CHOICE_ANSWER, THOUGHT };
+    private DialogueData currentDialogue;
+    public enum REWARDTYPE { EVENT, ITEM, STACKABLE_EVENT, GOLD };
+    public enum EVENTTYPE { none, player_name };
+    private EVENTTYPE eventType;
+    #endregion
 
     [Header("LevelTuto_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
 
-    // ENUM DATA
-    public enum DIALOGUETYPE { DIALOGUE, CHOICE_DIALOGUE, CHOICE_ANSWER, THOUGHT };
-    private DialogueData currentDialogue;
-    public enum REWARDTYPE { EVENT, ITEM , STACKABLE_EVENT, GOLD};
-    public enum EVENTTYPE { none, player_name };
-    private EVENTTYPE eventType;
+    public enum PLAYERSTATE { IN_EXPLORATION,IN_DIALOGUE };
+    private PLAYERSTATE playerState;
+    private GameObject interactableObject;
+    private PLAYERSTATE interactableNextState;
 
     [Header("Player Data")]
     private string playerName = "";
@@ -48,31 +57,75 @@ public class GameManager : MonoBehaviour
 
     [Header("DEBUG")]
     [SerializeField] private int currentDialogueIndex;
+    public static GameManager instance;
+
+    void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
 
     void Start()
     {
-        stackableEventRewards = new List<string>();
+        // init music
         SoundManager.Instance.PlayMusic(lvl1Music, true);
-        textApparitionScript = GetComponent<TextApparition>();
+
+        // init var 
+        //      dialogues
+        stackableEventRewards = new List<string>();
         TextApparition.onFinishText += this.OnFinishedText;
         answers = new Dictionary<string, DialogueData>();
-        pnjPanel.SetActive(true);
-        csvReader = GetComponent<CsvReader>();
-        csvReader.InitCsvParser(this);
+        //textApparitionScript = GetComponent<TextApparition>();
+        //csvReader = GetComponent<CsvReader>();
+        csvReader.InitCsvParser(instance);
+        //      player data
+        playerGoldTxtAmount.text = playerGold.ToString();
 
-        SetDialogueIndex(currentDialogueIndex);
-        textApparitionScript.DisplayText(pnjTxt,currentDialogue.text, currentDialogue.scrollDelay);
-
-        UpdatePlayerGold(0);
     }
 
     // Update is called once per frame
     private void Update()
     {
-        if ((Input.GetMouseButtonDown(0) || Input.anyKeyDown)&& canPassNextDialogue)
+        //dialogue
+        switch (playerState)
         {
-            SetNextAction();
+            case PLAYERSTATE.IN_DIALOGUE:
+                if (Input.GetKeyDown(KeyCode.Space)) // (Input.GetMouseButtonDown(0) || Input.anyKeyDown) 
+                {
+                    if (canPassNextDialogue)
+                    {
+                        SetNextAction();
+                    }
+                    if (hasInputFieldOpened)
+                    {
+                        inputField.Select();
+                    }
+                }
+                break;
+            case PLAYERSTATE.IN_EXPLORATION:
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    StartInteraction();
+                }
+                break;
+            default:
+                Debug.LogError("Player has no state !!!");
+                break;
         }
+    }
+
+    #region Dialogue
+    private void StartDialogue()
+    {
+        // Display first dialogue
+        pnjPanel.SetActive(true);
+        SetDialogueIndex(currentDialogueIndex);
+        textApparitionScript.DisplayText(pnjTxt,currentDialogue.text, currentDialogue.scrollDelay);
     }
 
     private void SetDialogueIndex(int i)
@@ -308,7 +361,7 @@ public class GameManager : MonoBehaviour
     public void OnFinishedText()
     {
        // thoughtPanel.SetActive(true);
-        if (!hasInputOpened)
+        if (!hasInputFieldOpened)
         {
             canPassNextDialogue = true;
             dialogueFinishedFeedback.SetActive(true);
@@ -324,16 +377,17 @@ public class GameManager : MonoBehaviour
             dialogueFinishedFeedback.SetActive(false);
             inputField.gameObject.SetActive(true);
             thoughtPanel.SetActive(true);
-            hasInputOpened = true;
+            hasInputFieldOpened = true;
         }
         else
         {
             inputField.GetComponent<TMP_InputField>().text = "";
             inputField.gameObject.SetActive(false);
             thoughtManager.FadeOutAllThoughts();
-            hasInputOpened = false;
+            hasInputFieldOpened = false;
         }
     }
+
 
     public void AnswerText()
     {
@@ -352,6 +406,7 @@ public class GameManager : MonoBehaviour
         else
         {
             string answer = (inputField.text).ToLower();
+            answer.Replace(" ", "");
 
             if (answers.ContainsKey(answer))
             {
@@ -415,10 +470,51 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
+    #endregion
+
     // Player Data
     private void UpdatePlayerGold(int valueToAdd)
     {
         playerGold += valueToAdd;
         playerGoldTxtAmount.text = playerGold.ToString();
+    }
+
+    public void CheckInteraction(GameObject hitObject)
+    {
+        if (hitObject != null)
+        {
+            if (hitObject.GetComponent<NPCController>() != null)
+            {
+                feedbackCanDialogue.SetActive(true);
+                interactableObject = hitObject;
+                interactableNextState = PLAYERSTATE.IN_DIALOGUE;
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+    public void NoInteraction()
+    {
+        feedbackCanDialogue.SetActive(false);
+        interactableObject = null;
+        interactableNextState = PLAYERSTATE.IN_EXPLORATION;
+    }
+
+    public void StartInteraction()
+    {
+        playerState = interactableNextState;
+        switch (playerState)
+        {
+            case PLAYERSTATE.IN_DIALOGUE:
+                Debug.Log(interactableObject.GetComponent<NPCController>().DialogueFileName);
+                StartDialogue();
+                break;
+            default:
+                Debug.LogError("Missing PLAYERSTATE INTERACTION");
+                break;
+        }
     }
 }

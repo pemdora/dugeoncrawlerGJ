@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveCharacter : MonoBehaviour
+public class NPCController : MonoBehaviour
 {
     private bool CanMove;
     private IEnumerator moveCoroutine;
+    public string DialogueFileName;
+    public string dialogueID;
 
     [SerializeField] private Vector2 nextMove;
 
     // Start is called before the first frame update
     void Start()
     {
-        moveCoroutine = Move((int)nextMove.x, (int)nextMove.y);
-        StartCoroutine(moveCoroutine);
+        //moveCoroutine = Move((int)nextMove.x, (int)nextMove.y);
+        //StartCoroutine(moveCoroutine);
     }
 
     private IEnumerator Move(int _x, int _z)
