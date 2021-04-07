@@ -2898,21 +2898,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6903786823401996373, guid: 2cd3e168f45774889bee16d8a609aa1d,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.42762667
-      objectReference: {fileID: 0}
-    - target: {fileID: 6903786823401996373, guid: 2cd3e168f45774889bee16d8a609aa1d,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.42762667
-      objectReference: {fileID: 0}
-    - target: {fileID: 6903786823401996373, guid: 2cd3e168f45774889bee16d8a609aa1d,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.42762667
-      objectReference: {fileID: 0}
     - target: {fileID: 7607833563159917126, guid: 2cd3e168f45774889bee16d8a609aa1d,
         type: 3}
       propertyPath: m_Name
@@ -4564,7 +4549,7 @@ MonoBehaviour:
   maxDepthThreshold: 0.25
   minNormalsThreshold: 0
   maxNormalsThreshold: 0.25
-  material: {fileID: 2103773890}
+  material: {fileID: 1012878020}
 --- !u!1 &969003047
 GameObject:
   m_ObjectHideFlags: 0
@@ -4791,6 +4776,31 @@ Transform:
   m_Father: {fileID: 2137749662}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!21 &1012878020
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hidden/OutlinePlus
+  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
+  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors: []
 --- !u!1 &1015011774
 GameObject:
   m_ObjectHideFlags: 0
@@ -9775,31 +9785,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2093320441}
   m_CullTransparentMesh: 0
---- !u!21 &2103773890
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Hidden/OutlinePlus
-  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
-  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats: []
-    m_Colors: []
 --- !u!1 &2105594404
 GameObject:
   m_ObjectHideFlags: 0
