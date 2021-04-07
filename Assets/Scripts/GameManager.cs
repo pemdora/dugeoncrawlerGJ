@@ -49,7 +49,13 @@ public class GameManager : MonoBehaviour
     private EVENTTYPE eventType;
     #endregion
 
-    [Header("LevelTuto_PNJ1")]
+    [Header("BOOK")]
+    [SerializeField] private Book bookScript;
+    [SerializeField] private GameObject bookInputFieldPanel;
+    [SerializeField] private TMP_InputField inputFieldBook;
+    [SerializeField] private Sprite page6;
+    [SerializeField] private GameObject bookSucess;
+     [Header("LevelTuto_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
 
@@ -67,7 +73,7 @@ public class GameManager : MonoBehaviour
     private List<RewardData> rewards;
     [SerializeField] private PlayerController playerController;
     private bool isBookOpen = false;
-    private bool hasBook = false;
+    private bool hasBook = true;
     private string currentWeapon = ""; // TODO redo caca
     private int weaponAttack= 0; // TODO redo caca
     [SerializeField] private GameObject bookFeedbacks;
@@ -115,6 +121,29 @@ public class GameManager : MonoBehaviour
         //rewards.Add(rewardData);
         //currentWeapon = "sword cane";
         //weaponAttack = 20;
+    }
+    public void OnFLip()
+    {
+        if (bookScript.currentPage == 6)
+            bookInputFieldPanel.SetActive(true);
+        else
+            bookInputFieldPanel.SetActive(false);
+    }
+    public void AnswerTextBook()
+    {
+        string answer = (inputFieldBook.text).ToLower();
+        answer = answer.Trim();
+        Debug.Log("answer");
+        if (answer == "coffee")
+        {
+            bookScript.bookPages[6] = page6;
+            bookSucess.SetActive(true);
+        }
+        else
+        {
+            UpdatePlayerHealth(-5);
+        }
+        inputFieldBook.GetComponent<TMP_InputField>().text = "";
     }
 
     // Update is called once per frame
