@@ -9,6 +9,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Exterior
     second: {fileID: 2100000, guid: ab3fbfaef10204364a5788340dfc12ed, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Feuillage
+    second: {fileID: 2100000, guid: 87b7383ae92ca45c18fdc675682ffd6b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wall
+    second: {fileID: 2100000, guid: b7adcf37ab744436fa26334b0025a359, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
