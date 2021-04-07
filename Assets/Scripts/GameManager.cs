@@ -115,12 +115,6 @@ public class GameManager : MonoBehaviour
         csvReader.InitCsvParser(instance);
         //      player data
         playerGoldTxtAmount.text = playerGold.ToString();
-        
-        // TEST
-        //RewardData rewardData = new RewardData("item", "sword_cane");
-        //rewards.Add(rewardData);
-        //currentWeapon = "sword cane";
-        //weaponAttack = 20;
     }
     public void OnFLip()
     {
