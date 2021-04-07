@@ -115,7 +115,6 @@ public class GameManager : MonoBehaviour
                 }
                 else if (Input.GetKeyDown(KeyCode.B) && hasBook && !inputFieldWriting)
                 {
-                    Debug.Log("inputFieldWriting"+ inputFieldWriting);
                     InteractBook();
                 }
                 break;
