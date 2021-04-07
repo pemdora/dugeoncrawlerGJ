@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Price
+    second: {fileID: 2100000, guid: c51d5eaddd58d4d7490f6ec09b39e926, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Wall
     second: {fileID: 2100000, guid: b7adcf37ab744436fa26334b0025a359, type: 2}
   materials:
