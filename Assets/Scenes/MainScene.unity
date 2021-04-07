@@ -3369,6 +3369,31 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 752601019}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!21 &789860453
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hidden/OutlinePlus
+  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
+  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors: []
 --- !u!1 &793019951
 GameObject:
   m_ObjectHideFlags: 0
@@ -4479,7 +4504,7 @@ MonoBehaviour:
   maxDepthThreshold: 0.25
   minNormalsThreshold: 0
   maxNormalsThreshold: 0.25
-  material: {fileID: 1111440234}
+  material: {fileID: 789860453}
 --- !u!1 &969003047
 GameObject:
   m_ObjectHideFlags: 0
@@ -5247,31 +5272,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!21 &1111440234
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Hidden/OutlinePlus
-  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
-  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats: []
-    m_Colors: []
 --- !u!1 &1178983571
 GameObject:
   m_ObjectHideFlags: 0
@@ -5831,13 +5831,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1305814304 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7399322672538610260, guid: e3645f11e357cb64586596ca1bbc1623,
+    type: 3}
+  m_PrefabInstance: {fileID: 2235180015874537592}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1305814305
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1305814304}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 78f4839fddc80d14c88895fa95b7cd99, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &1305814306 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
     type: 3}
   m_PrefabInstance: {fileID: 2235180015874537592}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1305814304}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
@@ -6815,7 +6840,7 @@ MonoBehaviour:
   nextMove: {x: -1, y: 0}
   health: 100
   npcAttack: 0
-  npcName: 
+  npcName: Bobby
 --- !u!1 &1565386790
 GameObject:
   m_ObjectHideFlags: 0
@@ -8891,6 +8916,7 @@ GameObject:
   - component: {fileID: 1996333650}
   - component: {fileID: 1996333652}
   - component: {fileID: 1996333651}
+  - component: {fileID: 1996333653}
   m_Layer: 5
   m_Name: HealthAmount (1)
   m_TagString: Untagged
@@ -9036,6 +9062,25 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1996333649}
   m_CullTransparentMesh: 0
+--- !u!95 &1996333653
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996333649}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 78f4839fddc80d14c88895fa95b7cd99, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1998124620
 GameObject:
   m_ObjectHideFlags: 0
@@ -9301,7 +9346,7 @@ MonoBehaviour:
   nextMove: {x: -1, y: 0}
   health: 100
   npcAttack: 50
-  npcName: Jeff
+  npcName: Bazog
 --- !u!65 &2061360883
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10540,7 +10585,27 @@ PrefabInstance:
     - target: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 2
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4286631049
       objectReference: {fileID: 0}
     - target: {fileID: 2235180014988120520, guid: e3645f11e357cb64586596ca1bbc1623,
         type: 3}

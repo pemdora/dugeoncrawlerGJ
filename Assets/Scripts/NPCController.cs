@@ -25,6 +25,14 @@ public class NPCController : MonoBehaviour
     public void UpdateHealth(int valueToAdd)
     {
         health += valueToAdd;
+        if (valueToAdd > 0)
+        {
+            npcHealthTxt.GetComponent<Animator>().SetTrigger("Gain");
+        }
+        else if (valueToAdd < 0)
+        {
+            npcHealthTxt.GetComponent<Animator>().SetTrigger("Loose");
+        }
         if (health <= 0)
         {
             health = 0;

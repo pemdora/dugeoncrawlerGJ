@@ -154,7 +154,6 @@ public class GameManager : MonoBehaviour
                 {
                     if (canPassNextDialogue)
                     {
-                        Debug.Log("YODO");
                         SetNextCombatAction();
                     }
                     if (hasInputFieldOpened)
@@ -243,14 +242,68 @@ public class GameManager : MonoBehaviour
     {
         if (playerTurn)
         {
-
+            SetCombatPlayer();
         }
         else
         {
+            playerTxt.text = "";
             int damage = -opponent.GetStrengh();
             string name = opponent.GetName();
             UpdatePlayerHealth(damage);
-            textApparitionScript.DisplayText(pnjTxt, "Hit you");
+            textApparitionScript.DisplayText(pnjTxt, name+" hit you");
+            playerTurn = true;
+        }
+    }
+
+    private void SetCombatPlayer()
+    {
+        pnjTxt.text = "";
+
+        SetInputField(true);
+
+        // TODO REMOVE THAT 
+        dialogueFinishedFeedback.SetActive(false);
+        answers.Clear();
+
+        IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == "G_COMBAT");
+        if (query.Count() <= 0)
+            Debug.LogError("Missing G_COMBAT sequence");
+
+        foreach (DialogueData entry in query)
+        {
+            if (entry.isDeleted)
+            {
+                //Debug.Log(entry.text + " isDeleted");
+                continue;
+            }
+            else
+            {
+                if (entry.type == DIALOGUETYPE.THOUGHT)
+                {
+                    // only add if requirements meets
+                    if (IsRequirementsOk(entry.requirements, entry.id))
+                        thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
+                }
+                else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
+                {
+                    // only add if requirements meets
+                    bool keyExists = answers.ContainsKey(entry.requiredInput);
+                    if (keyExists)
+                    {
+                        DialogueData oldValue = answers[entry.requiredInput];
+                        DialogueData newValue = entry;
+                        if (newValue.choicePriority > oldValue.choicePriority && IsRequirementsOk(newValue.requirements, newValue.id))
+                        {
+                            answers[entry.requiredInput] = newValue;
+                        }
+                    }
+                    else
+                    {
+                        answers.Add(entry.requiredInput, entry);
+                    }
+
+                }
+            }
         }
     }
 
@@ -297,60 +350,14 @@ public class GameManager : MonoBehaviour
                                 opponent.StartCombat(npcHealthTxt);
                             }
 
-                            playerTxt.text = "";
-                            pnjTxt.text = "";
-
-                            playerTurn = true;
                             playerState = PLAYERSTATE.IN_COMBAT;
                             eventType = EVENTTYPE.combat;
 
+                            playerTxt.text = "";
+                            playerTurn = true;
+
                             npcHealthPanel.SetActive(true);
-
-                            // init choice panels
-                            dialogueFinishedFeedback.SetActive(false);
-                            SetInputField(true);
-                            answers.Clear();
-
-                            IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == "G_COMBAT");
-                            if (query.Count() <= 0)
-                                Debug.LogError("Missing G_COMBAT sequence");
-
-                            foreach (DialogueData entry in query)
-                            {
-                                if (entry.isDeleted)
-                                {
-                                    //Debug.Log(entry.text + " isDeleted");
-                                    continue;
-                                }
-                                else
-                                {
-                                    if (entry.type == DIALOGUETYPE.THOUGHT)
-                                    {
-                                        // only add if requirements meets
-                                        if (IsRequirementsOk(entry.requirements, entry.id))
-                                            thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
-                                    }
-                                    else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
-                                    {
-                                        // only add if requirements meets
-                                        bool keyExists = answers.ContainsKey(entry.requiredInput);
-                                        if (keyExists)
-                                        {
-                                            DialogueData oldValue = answers[entry.requiredInput];
-                                            DialogueData newValue = entry;
-                                            if (newValue.choicePriority > oldValue.choicePriority && IsRequirementsOk(newValue.requirements, newValue.id))
-                                            {
-                                                answers[entry.requiredInput] = newValue;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            answers.Add(entry.requiredInput, entry);
-                                        }
-
-                                    }
-                                }
-                            }
+                            SetCombatPlayer();
                             break;
                         default:
                             Debug.LogError("EVENT not recognize " + reward.stringValue);
@@ -768,6 +775,14 @@ public class GameManager : MonoBehaviour
     private void UpdatePlayerHealth(int valueToAdd)
     {
         playerHealth += valueToAdd;
+        if (valueToAdd > 0)
+        {
+            playerHealthTxt.GetComponent<Animator>().SetTrigger("Gain");
+        }
+        else if (valueToAdd < 0)
+        {
+            playerHealthTxt.GetComponent<Animator>().SetTrigger("Loose");
+        }
         if (playerHealth <= 0)
         {
             playerHealth = 0;
