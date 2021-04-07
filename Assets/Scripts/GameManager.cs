@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
     private bool hasBook = false;
     private string currentWeapon = ""; // TODO redo caca
     private int weaponAttack= 0; // TODO redo caca
+    [SerializeField] private GameObject bookFeedbacks;
     [SerializeField] private GameObject bookPanel;
     private bool playerTurn;
     [Header("NPC Data")]
@@ -108,11 +109,12 @@ public class GameManager : MonoBehaviour
         csvReader.InitCsvParser(instance);
         //      player data
         playerGoldTxtAmount.text = playerGold.ToString();
+        
         // TEST
-        RewardData rewardData = new RewardData("item", "axe");
-        rewards.Add(rewardData);
-        currentWeapon = "axe";
-        weaponAttack = 10;
+        //RewardData rewardData = new RewardData("item", "sword_cane");
+        //rewards.Add(rewardData);
+        //currentWeapon = "sword cane";
+        //weaponAttack = 20;
     }
 
     // Update is called once per frame
@@ -330,7 +332,11 @@ public class GameManager : MonoBehaviour
                         weaponAttack = 20;
                         currentWeapon = textData;
                     }
-                    Debug.Log("currentWeaponcurrentWeaponcurrentWeaponcurrentWeapon");
+                    else if(reward.stringValue == "book")
+                    {
+                        hasBook = true;
+                        bookFeedbacks.SetActive(true);
+                    }
                     dialogueFinishedFeedback.SetActive(false);
                     StartCoroutine("SpaceAndNextSpeech");
                     break;
@@ -599,7 +605,8 @@ public class GameManager : MonoBehaviour
         if (!hasInputFieldOpened)
         {
             canPassNextDialogue = true;
-            dialogueFinishedFeedback.SetActive(true);
+            if(dialogueFinishedFeedback)
+                dialogueFinishedFeedback.SetActive(true);
         }
     }
 
@@ -660,12 +667,20 @@ public class GameManager : MonoBehaviour
                     {
                         // input validated
                         DialogueData dialogData = answers[answer];
-                        if (dialogData.rewards.Count > 0)
-                        {
-                            RewardData res = dialogData.rewards[0];
-                        }
                         textApparitionScript.DisplayText(playerTxt, dialogData.text);
-                        interactableObject.GetComponent<NPCController>().UpdateHealth(-weaponAttack);
+                        //if (dialogData.rewards.Count > 0)
+                        //{
+                        //    RewardData res = dialogData.rewards[0];
+                        //}
+                        if (answer == "hit")
+                        {
+                            interactableObject.GetComponent<NPCController>().UpdateHealth(-weaponAttack);
+                        }
+                        else if (answer == "potion")
+                        {
+                            interactableObject.GetComponent<NPCController>().UpdateHealth(10);
+                        }
+
                         playerTurn = false;
 
                         canPassNextDialogue = false;
