@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
 #pragma warning disable 0649
     #region Dialogue
     [Header("UI")]
+    [SerializeField] private GameObject gameOverPanel;
     // visual feedbacks
     [SerializeField] private GameObject feedbackCanDialogue;
     [SerializeField] private GameObject dialogueFinishedFeedback;
@@ -60,10 +62,12 @@ public class GameManager : MonoBehaviour
     private string playerName = "";
     [SerializeField] private int playerGold = 120;
     [SerializeField] private TMP_Text playerGoldTxtAmount;
+    [SerializeField] private int playerHealth= 100;
+    [SerializeField] private TMP_Text playerHealthTxt;
     private List<RewardData> rewards;
     [SerializeField] private PlayerController playerController;
     private bool isBookOpen = false;
-    private bool hasBook = true;
+    private bool hasBook = false;
     private string currentWeapon = ""; // TODO redo caca
     [SerializeField] private GameObject bookPanel;
 
@@ -98,10 +102,9 @@ public class GameManager : MonoBehaviour
         csvReader.InitCsvParser(instance);
         //      player data
         playerGoldTxtAmount.text = playerGold.ToString();
-
         // TEST
-        RewardData rewardData = new RewardData("item", "axe");
-        rewards.Add(rewardData);
+        //RewardData rewardData = new RewardData("item", "axe");
+        //rewards.Add(rewardData);
 
     }
 
@@ -177,6 +180,7 @@ public class GameManager : MonoBehaviour
         pnjPanel.SetActive(true);
         playerDialoguesInteractPanel.SetActive(true);
         SetDialogueIndex(currentDialogueIndex);
+        Debug.Log("currentDialogueIndex" + currentDialogueIndex);
         textApparitionScript.DisplayText(pnjTxt, currentDialogue.text, currentDialogue.scrollDelay);
     }
     private void ExitDialogueState()
@@ -258,6 +262,7 @@ public class GameManager : MonoBehaviour
                         case "combat":
                             eventType = EVENTTYPE.combat;
 
+                            playerState = PLAYERSTATE.IN_COMBAT;
                             // init choice panels
                             dialogueFinishedFeedback.SetActive(false);
                             SetInputField(true);
@@ -639,7 +644,7 @@ public class GameManager : MonoBehaviour
             string answer = (inputField.text).ToLower();
             answer = answer.Trim(); // Remove white space before and after / Replace(" ", "");
 
-            if (answers.ContainsKey(answer))
+            if (answers.ContainsKey(answer) && IsRequirementsOk(answers[answer].requirements, answers[answer].id))
             {
                 // input validated
                 currentDialogue = answers[answer];
@@ -709,6 +714,26 @@ public class GameManager : MonoBehaviour
         playerGold += valueToAdd;
         playerGoldTxtAmount.text = playerGold.ToString();
     }
+    private void UpdatePlayerHealth(int valueToAdd)
+    {
+        playerHealth += valueToAdd;
+        if (playerHealth <= 0)
+        {
+            playerHealth = 0;
+            GameOver();
+        }
+        playerHealthTxt.text = playerHealth.ToString();
+    }
+    private void GameOver()
+    {
+        gameOverPanel.SetActive(true);
+    }
+
+    public void Retry()
+    {
+        int scene = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
+    }
 
     public void CheckInteraction(GameObject hitObject)
     {
@@ -738,9 +763,12 @@ public class GameManager : MonoBehaviour
         switch (playerState)
         {
             case PLAYERSTATE.IN_DIALOGUE:
-                playerController.CanMove = false;
-                int index = interactableObject.GetComponent<NPCController>().dialogueID;
-                StartDialogue(index);
+                if (interactableObject.GetComponent<NPCController>().CanDialogue)
+                {
+                    playerController.CanMove = false;
+                    int index = interactableObject.GetComponent<NPCController>().dialogueID;
+                    StartDialogue(index);
+                }
                 break;
             case PLAYERSTATE.IN_EXPLORATION:
                 playerController.CanMove = true;

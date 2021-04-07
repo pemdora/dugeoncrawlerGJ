@@ -8,6 +8,7 @@ public class AnimationEvent : MonoBehaviour
     [SerializeField] private GameObject objectToEnable;
     [SerializeField] private GameObject objectToDisable;
 
+    [SerializeField] private GameObject aplhaObj;
     public void DisableGameObject()
     {
         objectToDisable.SetActive(false);
@@ -16,5 +17,9 @@ public class AnimationEvent : MonoBehaviour
     public void EnableGameObject()
     {
         objectToEnable.SetActive(true);
+    }
+    public void SetAlpha()
+    {
+        aplhaObj.GetComponent<CanvasGroup>().alpha = 1f;
     }
 }
