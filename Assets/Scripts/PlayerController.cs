@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+#pragma warning disable 0649
     [HideInInspector] public bool CanMove;
     private IEnumerator moveCoroutine;
     private GameObject hitFwrdObject;

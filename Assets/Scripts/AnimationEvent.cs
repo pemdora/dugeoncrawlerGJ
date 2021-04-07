@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AnimationEvent : MonoBehaviour
 {
+#pragma warning disable 0649
     [SerializeField] private GameObject objectToEnable;
     [SerializeField] private GameObject objectToDisable;
 

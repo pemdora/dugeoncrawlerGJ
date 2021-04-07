@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class NPCController : MonoBehaviour
 {
+#pragma warning disable 0649
     [HideInInspector]public bool CanDialogue;
     private bool CanMove;
     private IEnumerator moveCoroutine;
-    public string DialogueFileName;
-    public string dialogueID;
+    public int dialogueID;
 
     [SerializeField] private Vector2 nextMove;
 

@@ -12,7 +12,9 @@ public enum FlipMode
     LeftToRight
 }
 [ExecuteInEditMode]
-public class Book : MonoBehaviour {
+public class Book : MonoBehaviour
+{
+#pragma warning disable 0649
     public Canvas canvas;
     [SerializeField]
     RectTransform BookPanel;

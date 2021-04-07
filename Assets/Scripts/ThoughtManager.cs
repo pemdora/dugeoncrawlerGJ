@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ThoughtManager : MonoBehaviour
 {
+#pragma warning disable 0649
     [SerializeField] private List<GameObject> thoughtParents;
     private List<IEnumerator> thoughtCoroutines;
     private int maxFloatAnim =3;

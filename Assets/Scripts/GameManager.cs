@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
     private bool hasInputFieldOpened;
     private bool inputFieldWriting = false;
 
+    [HideInInspector] public Dictionary<int, List<DialogueData>> dialoguesDB;
     [HideInInspector] public List<DialogueData> dialoguesData;
     private Dictionary<string, DialogueData> answers; // possible answers that player can answer
     private string wrongAnswer;
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
     public enum DIALOGUETYPE { DIALOGUE, CHOICE_DIALOGUE, CHOICE_ANSWER, THOUGHT };
     private DialogueData currentDialogue;
     public enum REWARDTYPE { EVENT, ITEM, STACKABLE_EVENT, GOLD };
-    public enum EVENTTYPE { none, player_name };
+    public enum EVENTTYPE { none, player_name,combat };
     private EVENTTYPE eventType;
     #endregion
 
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
 
-    public enum PLAYERSTATE { IN_EXPLORATION, IN_DIALOGUE };
+    public enum PLAYERSTATE { IN_EXPLORATION, IN_DIALOGUE ,IN_COMBAT};
     private PLAYERSTATE playerState;
     private GameObject interactableObject;
     private PLAYERSTATE interactableNextState;
@@ -63,6 +64,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     private bool isBookOpen = false;
     private bool hasBook = true;
+    private string currentWeapon = ""; // TODO redo caca
     [SerializeField] private GameObject bookPanel;
 
     [Header("DEBUG")]
@@ -92,9 +94,14 @@ public class GameManager : MonoBehaviour
         answers = new Dictionary<string, DialogueData>();
         //textApparitionScript = GetComponent<TextApparition>();
         //csvReader = GetComponent<CsvReader>();
+        dialoguesDB = new Dictionary<int, List<DialogueData>>();
         csvReader.InitCsvParser(instance);
         //      player data
         playerGoldTxtAmount.text = playerGold.ToString();
+
+        // TEST
+        RewardData rewardData = new RewardData("item", "axe");
+        rewards.Add(rewardData);
 
     }
 
@@ -132,6 +139,25 @@ public class GameManager : MonoBehaviour
                     InteractBook();
                 }
                 break;
+            case PLAYERSTATE.IN_COMBAT:
+                if (Input.GetKeyDown(KeyCode.Space)) // (Input.GetMouseButtonDown(0) || Input.anyKeyDown) 
+                {
+                    if (canPassNextDialogue)
+                    {
+                        Debug.Log("YODO");
+                       // SetNextAction();
+                    }
+                    if (hasInputFieldOpened)
+                    {
+                        inputField.Select();
+                        OnSelectnputField();
+                    }
+                }
+                else if (Input.GetKeyDown(KeyCode.B) && hasBook && !inputFieldWriting)
+                {
+                    InteractBook();
+                }
+                break;
             default:
                 Debug.LogError("Player has no state !!!");
                 break;
@@ -139,8 +165,14 @@ public class GameManager : MonoBehaviour
     }
 
     #region Dialogue
-    private void StartDialogue()
+    private void StartDialogue(int index)
     {
+        if(index> dialoguesDB.Count)
+        {
+            Debug.LogError(index + "is not added in dialoguesDB");
+            return;
+        }
+        dialoguesData = dialoguesDB[index];
         // Display first dialogue
         pnjPanel.SetActive(true);
         playerDialoguesInteractPanel.SetActive(true);
@@ -149,23 +181,39 @@ public class GameManager : MonoBehaviour
     }
     private void ExitDialogueState()
     {
+        merchPricePanel.SetActive(false);
         playerState = PLAYERSTATE.IN_EXPLORATION;
         pnjPanel.SetActive(false);
         playerDialoguesInteractPanel.SetActive(false);
         dialogueFinishedFeedback.SetActive(false);
         playerController.CanMove = true;
         interactableObject.GetComponent<NPCController>().EndDialogue();
+        currentDialogueIndex = 0;
     }
 
     private void SetDialogueIndex(int i)
     {
-        if (i >= dialoguesData.Count)
+        if (i > dialoguesData.Count)
         {
             Debug.LogError("Invalid index");
             return;
         }
         currentDialogueIndex = i;
-        currentDialogue = dialoguesData[i];
+        bool isRequirementOk = false;
+        do
+        {
+            isRequirementOk = IsRequirementsOk(dialoguesData[currentDialogueIndex].requirements, i);
+            if(!isRequirementOk)
+            {
+                currentDialogueIndex++;
+                if (currentDialogueIndex > dialoguesData.Count)
+                {
+                    Debug.LogError("Invalid index");
+                    return;
+                }
+            }
+        } while (isRequirementOk == false);
+        currentDialogue = dialoguesData[currentDialogueIndex];
     }
 
     private void SetNextAction()
@@ -192,6 +240,11 @@ public class GameManager : MonoBehaviour
                     rewardPanel.SetActive(true);
                     string textData = reward.stringValue.Replace("_", " ");
                     textReward.text = textData;
+                    // TODO change
+                    if (reward.stringValue == "axe" || reward.stringValue == "sword_cane")
+                    {
+                        currentWeapon = textData;
+                    }
                     dialogueFinishedFeedback.SetActive(false);
                     StartCoroutine("SpaceAndNextSpeech");
                     break;
@@ -201,6 +254,55 @@ public class GameManager : MonoBehaviour
                         case "player_name":
                             eventType = EVENTTYPE.player_name;
                             SetInputField(true);
+                            break;
+                        case "combat":
+                            eventType = EVENTTYPE.combat;
+
+                            // init choice panels
+                            dialogueFinishedFeedback.SetActive(false);
+                            SetInputField(true);
+                            answers.Clear();
+
+                            IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == "G_COMBAT");
+                            if (query.Count() <= 0)
+                                Debug.LogError("Missing G_COMBAT sequence");
+
+                            foreach (DialogueData entry in query)
+                            {
+                                if (entry.isDeleted)
+                                {
+                                    //Debug.Log(entry.text + " isDeleted");
+                                    continue;
+                                }
+                                else
+                                {
+                                    if (entry.type == DIALOGUETYPE.THOUGHT)
+                                    {
+                                        // only add if requirements meets
+                                        if (IsRequirementsOk(entry.requirements, entry.id))
+                                            thoughtManager.FillThoughts(entry.thoughtIndex, entry.thoughtAnim, entry.delay, entry.text);
+                                    }
+                                    else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
+                                    {
+                                        // only add if requirements meets
+                                        bool keyExists = answers.ContainsKey(entry.requiredInput);
+                                        if (keyExists)
+                                        {
+                                            DialogueData oldValue = answers[entry.requiredInput];
+                                            DialogueData newValue = entry;
+                                            if (newValue.choicePriority > oldValue.choicePriority && IsRequirementsOk(newValue.requirements, newValue.id))
+                                            {
+                                                answers[entry.requiredInput] = newValue;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            answers.Add(entry.requiredInput, entry);
+                                        }
+
+                                    }
+                                }
+                            }
                             break;
                         default:
                             Debug.LogError("EVENT not recognize " + reward.stringValue);
@@ -488,6 +590,48 @@ public class GameManager : MonoBehaviour
                     SetInputField(false);
                     eventType = EVENTTYPE.none;
                     break;
+                case EVENTTYPE.combat:
+                    string answer = (inputField.text).ToLower();
+                    answer = answer.Trim(); // Remove white space before and after / Replace(" ", "");
+                    if (answers.ContainsKey(answer))
+                    {
+                        // input validated
+                        DialogueData dialogData = answers[answer];
+                        if (dialogData.rewards.Count > 0)
+                        {
+                            var res = dialogData.rewards[0];
+                            Debug.Log("" + dialogData.rewards);
+                        }
+                        textApparitionScript.DisplayText(playerTxt, dialogData.text);
+
+                        Debug.Log("PNJ ATAACK");
+                        // close input panel
+                        //SetInputField(false);
+                        //answers.Clear();
+                    }
+                    else
+                    {
+                        SetInputField(false);
+                        inputField.GetComponent<TMP_InputField>().text = "";
+
+                        canPassNextDialogue = false;
+                        dialogueFinishedFeedback.SetActive(false);
+                        playerTxt.gameObject.SetActive(true);
+                        textApparitionScript.DisplayText(playerTxt, "You missed your action !");
+
+                        // DELETE dialogues from current
+                        foreach (int dialogueID in currentDialogue.deleteDialoguesID)
+                        {
+                            dialoguesData[dialogueID].isDeleted = true;
+                        }
+
+                        Debug.Log("PNJ ATAACK");
+                    }
+                    break;
+                default:
+                    inputField.GetComponent<TMP_InputField>().text = "";
+                    Debug.LogError("Missing EVENTYPE INPUT" + eventType);
+                    break;
             }
         }
         else
@@ -595,8 +739,8 @@ public class GameManager : MonoBehaviour
         {
             case PLAYERSTATE.IN_DIALOGUE:
                 playerController.CanMove = false;
-                Debug.Log(interactableObject.GetComponent<NPCController>().DialogueFileName);
-                StartDialogue();
+                int index = interactableObject.GetComponent<NPCController>().dialogueID;
+                StartDialogue(index);
                 break;
             case PLAYERSTATE.IN_EXPLORATION:
                 playerController.CanMove = true;

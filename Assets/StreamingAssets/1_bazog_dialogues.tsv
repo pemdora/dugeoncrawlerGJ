@@ -1,0 +1,12 @@
+ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought anim index	Text Delay	Text scroll delay	Speaker ID	SpeakerName	"Requirements (type:name/amount;type:name/amount)"	Required Input	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
+0		Dialogue	1				Guard_1	Orc	item:axe		<b>NO WEAPONS ALLOWED PREPARED TO FIGHT</b>	event:combat	-1	
+1		Dialogue					Guard_1	Orc	item:sword_cane		You seem shady. what are you up to ?		G_0	
+2	G_0	Thought		0_0					item:sword_cane		Start <color=red>fight</color> ?			
+3	G_0	Choice_Answer							item:sword_cane	fight	I want you to DIE !	event:combat	4	
+4		Dialogue					Guard_1	Orc			Hello ! What are you doing ?		-1	
+5	Wrong_Input	Dialogue									Huh ?			
+6	G_COMBAT	Thought		0_0							<color=red>Attack</color>			
+7	G_COMBAT	Thought		1_0							Use <color=red>Potion</color>			
+8	G_COMBAT	Choice_Answer							item:axe	hit	Use axe	event:hit		
+9	G_COMBAT	Choice_Answer							item:sword_cane	heal	Heal	event:heal		
+10	G_COMBAT	Choice_Answer							item:sword_cane	attack	Use sword cane			

@@ -20,10 +20,11 @@ public class CsvReader : MonoBehaviour
         // Check that your file is UTF 8 encoded 
 
 
-        StartCoroutine(loadStreamingAsset("dialogues.tsv", manager));
+        StartCoroutine(loadStreamingAsset(0, "0_jeff_dialogues.tsv", manager));
+        StartCoroutine(loadStreamingAsset(1, "1_bazog_dialogues.tsv", manager));
     }
 
-    IEnumerator loadStreamingAsset(string fileName, GameManager manager)
+    IEnumerator loadStreamingAsset(int index,string fileName, GameManager manager)
     {
         string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
 
@@ -37,16 +38,16 @@ public class CsvReader : MonoBehaviour
         else
             result = System.IO.File.ReadAllText(filePath);
 
-        ReadActions(manager, result);
+        ReadDialogues(index,manager, result);
     }
 
-    private void ReadActions(GameManager manager, string text)
+    private void ReadDialogues(int index, GameManager manager, string fileInText)
     {
         // initData
-        manager.dialoguesData = new List<DialogueData>();
+        List<DialogueData> dialoguesData = new List<DialogueData>();
 
         //Define separator pattern
-        var dataLines = text.Split('\n');
+        var dataLines = fileInText.Split('\n');
         for (int i = 1; i < dataLines.Length; i++)
         {
             var rowData = dataLines[i].Split('\t');
@@ -56,8 +57,9 @@ public class CsvReader : MonoBehaviour
                 continue;
             }
             DialogueData dialogue = new DialogueData(rowData[0], rowData[1], rowData[2], rowData[3], rowData[4], rowData[5], rowData[6], rowData[7], rowData[8], rowData[9], rowData[10], rowData[11], rowData[12], rowData[13], rowData[14]);
-            manager.dialoguesData.Add(dialogue);
+            dialoguesData.Add(dialogue);
         }
+        manager.dialoguesDB.Add(index, dialoguesData);
     }
 
 }
