@@ -825,7 +825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03b7e404a074b745a2c14266f621bbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameOverPanel: {fileID: 0}
+  gameOverPanel: {fileID: 1382187450}
   feedbackCanDialogue: {fileID: 1458755467}
   dialogueFinishedFeedback: {fileID: 237945532}
   textApparitionScript: {fileID: 947220639}
@@ -844,10 +844,10 @@ MonoBehaviour:
   playerGold: 80
   playerGoldTxtAmount: {fileID: 1910777854}
   playerHealth: 100
-  playerHealthTxt: {fileID: 0}
+  playerHealthTxt: {fileID: 1305814306}
   playerController: {fileID: 1018488074}
   bookPanel: {fileID: 1240721364}
-  currentDialogueIndex: 6
+  currentDialogueIndex: 0
 --- !u!4 &152573271
 Transform:
   m_ObjectHideFlags: 0
@@ -3180,6 +3180,9 @@ MonoBehaviour:
   CanDialogue: 0
   dialogueID: 0
   nextMove: {x: -1, y: 0}
+  health: 100
+  healthTxt: {fileID: 0}
+  npcAttack: 0
 --- !u!65 &701059341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3879,6 +3882,31 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 103.839966, y: 18.34}
   m_Pivot: {x: 1, y: 0}
+--- !u!21 &915024550
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Hidden/OutlinePlus
+  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
+  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats: []
+    m_Colors: []
 --- !u!1 &941367611
 GameObject:
   m_ObjectHideFlags: 0
@@ -4474,7 +4502,7 @@ MonoBehaviour:
   maxDepthThreshold: 0.25
   minNormalsThreshold: 0
   maxNormalsThreshold: 0.25
-  material: {fileID: 1501208402}
+  material: {fileID: 915024550}
 --- !u!1 &969003047
 GameObject:
   m_ObjectHideFlags: 0
@@ -5801,6 +5829,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1305814306 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1136193453492327588, guid: e3645f11e357cb64586596ca1bbc1623,
+    type: 3}
+  m_PrefabInstance: {fileID: 2235180015874537592}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1336526352
 GameObject:
   m_ObjectHideFlags: 0
@@ -6710,31 +6750,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1474012628}
   m_CullTransparentMesh: 0
---- !u!21 &1501208402
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Hidden/OutlinePlus
-  m_Shader: {fileID: 4800000, guid: f0e778543e4d8a34295b7995426495da, type: 3}
-  m_ShaderKeywords: OUTLINE_USE_DEPTH OUTLINE_USE_NORMALS
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats: []
-    m_Colors: []
 --- !u!1 &1525895034
 GameObject:
   m_ObjectHideFlags: 0
@@ -6796,6 +6811,9 @@ MonoBehaviour:
   CanDialogue: 0
   dialogueID: -1
   nextMove: {x: -1, y: 0}
+  health: 100
+  healthTxt: {fileID: 0}
+  npcAttack: 0
 --- !u!1 &1565386790
 GameObject:
   m_ObjectHideFlags: 0
@@ -7288,6 +7306,9 @@ MonoBehaviour:
   CanDialogue: 0
   dialogueID: 0
   nextMove: {x: -1, y: 0}
+  health: 100
+  healthTxt: {fileID: 0}
+  npcAttack: 0
 --- !u!1 &1621013425
 GameObject:
   m_ObjectHideFlags: 0
@@ -9276,6 +9297,9 @@ MonoBehaviour:
   CanDialogue: 0
   dialogueID: 1
   nextMove: {x: -1, y: 0}
+  health: 100
+  healthTxt: {fileID: 0}
+  npcAttack: 0
 --- !u!65 &2061360883
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11906,6 +11930,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 517623116, guid: 2d8e70d754b922f47a32382e0f8250bf, type: 3}
+      propertyPath: m_RootOrder
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 661133341, guid: 2d8e70d754b922f47a32382e0f8250bf, type: 3}
+      propertyPath: m_RootOrder
+      value: 63
+      objectReference: {fileID: 0}
+    - target: {fileID: 874636466, guid: 2d8e70d754b922f47a32382e0f8250bf, type: 3}
+      propertyPath: m_RootOrder
+      value: 62
+      objectReference: {fileID: 0}
+    - target: {fileID: 1336526353, guid: 2d8e70d754b922f47a32382e0f8250bf, type: 3}
+      propertyPath: m_RootOrder
+      value: 61
+      objectReference: {fileID: 0}
     - target: {fileID: 958080679269903368, guid: 2d8e70d754b922f47a32382e0f8250bf,
         type: 3}
       propertyPath: m_IsActive

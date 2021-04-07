@@ -69,7 +69,9 @@ public class GameManager : MonoBehaviour
     private bool isBookOpen = false;
     private bool hasBook = false;
     private string currentWeapon = ""; // TODO redo caca
+    private int weaponAttack= 0; // TODO redo caca
     [SerializeField] private GameObject bookPanel;
+    private bool playerTurn;
 
     [Header("DEBUG")]
     [SerializeField] private int currentDialogueIndex;
@@ -103,9 +105,9 @@ public class GameManager : MonoBehaviour
         //      player data
         playerGoldTxtAmount.text = playerGold.ToString();
         // TEST
-        //RewardData rewardData = new RewardData("item", "axe");
-        //rewards.Add(rewardData);
-
+        RewardData rewardData = new RewardData("item", "axe");
+        rewards.Add(rewardData);
+        currentWeapon = "axe";
     }
 
     // Update is called once per frame
@@ -148,7 +150,7 @@ public class GameManager : MonoBehaviour
                     if (canPassNextDialogue)
                     {
                         Debug.Log("YODO");
-                       // SetNextAction();
+                        SetNextCombatAction();
                     }
                     if (hasInputFieldOpened)
                     {
@@ -180,7 +182,6 @@ public class GameManager : MonoBehaviour
         pnjPanel.SetActive(true);
         playerDialoguesInteractPanel.SetActive(true);
         SetDialogueIndex(currentDialogueIndex);
-        Debug.Log("currentDialogueIndex" + currentDialogueIndex);
         textApparitionScript.DisplayText(pnjTxt, currentDialogue.text, currentDialogue.scrollDelay);
     }
     private void ExitDialogueState()
@@ -193,6 +194,8 @@ public class GameManager : MonoBehaviour
         playerController.CanMove = true;
         interactableObject.GetComponent<NPCController>().EndDialogue();
         currentDialogueIndex = 0;
+        pnjTxt.text = "";
+        playerTxt.text = "";
     }
 
     private void SetDialogueIndex(int i)
@@ -231,6 +234,17 @@ public class GameManager : MonoBehaviour
             SetReward();
         }
     }
+    private void SetNextCombatAction()
+    {
+        if (playerTurn)
+        {
+
+        }
+        else
+        {
+            Debug.Log("PNJ ATAACK");
+        }
+    }
 
     private void SetReward()
     {
@@ -245,8 +259,14 @@ public class GameManager : MonoBehaviour
                     string textData = reward.stringValue.Replace("_", " ");
                     textReward.text = textData;
                     // TODO change
-                    if (reward.stringValue == "axe" || reward.stringValue == "sword_cane")
+                    if (reward.stringValue == "axe")
                     {
+                        weaponAttack = 10;
+                        currentWeapon = textData;
+                    }
+                    else if (reward.stringValue == "sword_cane")
+                    {
+                        weaponAttack = 20;
                         currentWeapon = textData;
                     }
                     dialogueFinishedFeedback.SetActive(false);
@@ -260,8 +280,9 @@ public class GameManager : MonoBehaviour
                             SetInputField(true);
                             break;
                         case "combat":
+                            // START COMBAT
                             eventType = EVENTTYPE.combat;
-
+                            playerTurn = true;
                             playerState = PLAYERSTATE.IN_COMBAT;
                             // init choice panels
                             dialogueFinishedFeedback.SetActive(false);
@@ -602,16 +623,21 @@ public class GameManager : MonoBehaviour
                     {
                         // input validated
                         DialogueData dialogData = answers[answer];
+                        Debug.Log("dialogData"+ dialogData.text);
                         if (dialogData.rewards.Count > 0)
                         {
                             var res = dialogData.rewards[0];
                             Debug.Log("" + dialogData.rewards);
                         }
                         textApparitionScript.DisplayText(playerTxt, dialogData.text);
+                        playerTurn = false;
 
-                        Debug.Log("PNJ ATAACK");
+                        canPassNextDialogue = false;
+                        dialogueFinishedFeedback.SetActive(false);
+                        playerTxt.gameObject.SetActive(true);
+
                         // close input panel
-                        //SetInputField(false);
+                        SetInputField(false);
                         //answers.Clear();
                     }
                     else
@@ -623,14 +649,10 @@ public class GameManager : MonoBehaviour
                         dialogueFinishedFeedback.SetActive(false);
                         playerTxt.gameObject.SetActive(true);
                         textApparitionScript.DisplayText(playerTxt, "You missed your action !");
+                        playerTurn = false;
 
-                        // DELETE dialogues from current
-                        foreach (int dialogueID in currentDialogue.deleteDialoguesID)
-                        {
-                            dialoguesData[dialogueID].isDeleted = true;
-                        }
-
-                        Debug.Log("PNJ ATAACK");
+                        // close input panel
+                        SetInputField(false);
                     }
                     break;
                 default:

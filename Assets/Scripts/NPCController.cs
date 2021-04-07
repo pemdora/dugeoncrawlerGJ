@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class NPCController : MonoBehaviour
@@ -11,11 +12,24 @@ public class NPCController : MonoBehaviour
     public int dialogueID;
 
     [SerializeField] private Vector2 nextMove;
+    [SerializeField] private int health = 100;
+    [SerializeField] private TMP_Text healthTxt;
+    [SerializeField] private int npcAttack;
 
     // Start is called before the first frame update
     void Start()
     {
         CanDialogue = true;
+    }
+    private void UpdateHealth(int valueToAdd)
+    {
+        health += valueToAdd;
+        if (health <= 0)
+        {
+            health = 0;
+            Debug.LogError("NPC DEAD"); //GAEMAMNGARDEr
+        }
+        healthTxt.text = health.ToString();
     }
 
     private void Update()
