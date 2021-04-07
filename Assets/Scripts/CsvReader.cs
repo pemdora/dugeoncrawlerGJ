@@ -52,7 +52,7 @@ public class CsvReader : MonoBehaviour
             var rowData = dataLines[i].Split('\t');
             if (rowData[0] == "")
             {
-                Debug.Log("skip");
+                //Debug.Log("skip");
                 continue;
             }
             DialogueData dialogue = new DialogueData(rowData[0], rowData[1], rowData[2], rowData[3], rowData[4], rowData[5], rowData[6], rowData[7], rowData[8], rowData[9], rowData[10], rowData[11], rowData[12], rowData[13], rowData[14]);

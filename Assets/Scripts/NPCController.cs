@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NPCController : MonoBehaviour
 {
+    [HideInInspector]public bool CanDialogue;
     private bool CanMove;
     private IEnumerator moveCoroutine;
     public string DialogueFileName;
@@ -14,8 +15,7 @@ public class NPCController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //moveCoroutine = Move((int)nextMove.x, (int)nextMove.y);
-        //StartCoroutine(moveCoroutine);
+        CanDialogue = true;
     }
 
     private void Update()
@@ -45,5 +45,15 @@ public class NPCController : MonoBehaviour
         }
         transform.position = finalPos;
         CanMove = true;
+    }
+
+    public void EndDialogue()
+    {
+        CanDialogue = false;
+        if(nextMove.x!=0|| nextMove.y != 0)
+        {
+            moveCoroutine = Move((int)nextMove.x, (int)nextMove.y);
+            StartCoroutine(moveCoroutine);
+        }
     }
 }

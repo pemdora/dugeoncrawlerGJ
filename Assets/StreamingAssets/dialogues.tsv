@@ -8,15 +8,15 @@ ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought an
 6		Choice_Dialogue					Seller_1	Jeff the merchant			Come and have a look to my items !		G_1	
 7	G_1	Thought		0_0	0						This <color=red>book</color> looks very interesting and usefull			
 8	G_1	Choice_Answer								book	I want to buy this book		9	
-9		Choice_Dialogue					Seller_1	Jeff the merchant			Fine, this guide book cost 100		G_2	
+9		Choice_Dialogue					Seller_1	Jeff the merchant			Fine, this guide book cost 30		G_2	
 10	G_2	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
 11	G_2	Choice_Answer			0.25					yes	Ok i'll buy it		18	
-12	G_2	Choice_Answer	1		0.25				gold:100	yes	Ok i'll buy it	item:guide/gold:-100	19	"7;8;19;14"
+12	G_2	Choice_Answer	1		0.25				gold:30	yes	Ok i'll buy it	item:guide/gold:-30	19	7/8/9/10/11/12/13/14/15/16/17
 13	G_2	Choice_Answer			0.25					no	No, it looks like crap		19	
-14	G_2	Thought		1_1					stackable_event:price_unlocked		But the displayed <color=red>price</color> said it's 50			
-15	G_2	Choice_Answer							stackable_event:price_unlocked	price	Hey ! it's displayed 50 gold !		16	
-16		Choice_Dialogue					Seller_1	Jeff the merchant			Oh my bad ! You are right it's 50 do you buy it ?		G_2	12
-17	G_2	Choice_Answer	2						gold:50/stackable_event:price_unlocked	yes	Gimme	item:guide/gold:-50	19	"16;17;8;9;10;11;12;13;14"
+14	G_2	Thought		1_1					stackable_event:price_unlocked		But the displayed <color=red>price</color> said it's 20			
+15	G_2	Choice_Answer							stackable_event:price_unlocked	price	Hey ! it's displayed 20 gold !		16	
+16		Choice_Dialogue					Seller_1	Jeff the merchant			Oh my bad ! You are right it's 20 do you buy it ?		G_2	12
+17	G_2	Choice_Answer	2						gold:50/stackable_event:price_unlocked	yes	Gimme	item:guide/gold:-20	19	16/17/7/8/9/10/11/12/13/14
 18		Choice_Dialogue					Seller_1	Jeff the merchant			Who do you think I am? Are you trying to steal from me?		G_1	
 19		Choice_Dialogue					Seller_1	Jeff the merchant			Wanna buy something else ?		G_1	
 20	G_1	Thought		3_1	3						How <color=red>much</color> does it cost ?			
@@ -24,16 +24,20 @@ ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought an
 22		Choice_Dialogue					Seller_1	Jeff the merchant			Right I'll display prices	stackable_event:price_unlocked	G_1	
 23	G_1	Thought		1_2	1						Oh what a nice <color=red>axe</color> !			
 24	G_1	Choice_Answer								axe	I want to buy this axe		25	
-25	G_1	Choice_Dialogue					Seller_1	Jeff the merchant			Nice choice, this sturdy axe costs 50		G_3	
+25	G_1	Choice_Dialogue					Seller_1	Jeff the merchant			Nice choice, this sturdy axe costs 40		G_3	
 26	G_3	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
 27	G_3	Choice_Answer								yes	Yes		18	
-28	G_3	Choice_Answer	1						gold:50	yes	Yes	item:axe	19	"24;25;26;27;28;29"
+28	G_3	Choice_Answer	1						gold:40	yes	Yes	item:axe/gold:-40	19	23/24/25/26/27/28/29
 29	G_3	Choice_Answer								no	No		19	
 30	G_1	Thought		2_0	2						Is that a <color=red>sword</color> cane ?			
 31	G_1	Choice_Answer								sword	How much for that sword cane ?		32	
-32		Choice_Dialogue					Seller_1	Jeff the merchant			Oh ! You know how to distinguish good things, it's 70		G_4	
+32		Choice_Dialogue					Seller_1	Jeff the merchant			Oh ! You know how to distinguish good things, it's 60		G_4	
 33	G_4	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
 34	G_4	Choice_Answer								yes	Yes		18	
-35	G_4	Choice_Answer	1						gold:70	yes	Yes	item:cane_sword	19	"30;31;32;33;34;35;36"
+35	G_4	Choice_Answer	1						gold:60	yes	Yes	item:sword_cane/gold:-60	19	30/31/32/33/34/35/36
 36	G_4	Choice_Answer								no	No		19	
-37	Wrong_Input	Dialogue									Huh ?			
+37	G_1	Thought		0_2					item:guide		<color=red>Leave</color> ?			
+38	G_1	Choice_Answer							item:guide	leave	Goodbye		39	
+39		Dialogue					Seller_1	Jeff the merchant			Thank you for your purchases !<br> Wait ! I'll give you 1 free potion !	item:health_potion	40	
+40		Dialogue									Oh that's nice, thank you !<br>Bye !		-1	
+41	Wrong_Input	Dialogue					Seller_1	Jeff the merchant			I don't understand			

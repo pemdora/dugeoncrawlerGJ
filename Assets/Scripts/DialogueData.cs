@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-public struct DialogueData
+public class DialogueData // => need to change data at runtime
 {
 #pragma warning disable 0649
     public int id;
@@ -28,7 +28,7 @@ public struct DialogueData
     public bool specialRef;
     public string text;
     public string nextDialogueID;
-    public string deleteDialogueID;// TODO CHECK
+    public List<int> deleteDialoguesID;// TODO CHECK
     public bool isDeleted;
 
     public DialogueData(string _id, string _sequenceID, string _type, string _choiceParam, string _thoughsParams,  string _delay, string _scrollDelay, string _speakerID, string _speakerName, string _requirements, string _requiredInput, string _text, string _rewards, string _nextDialogueID,string _deleteDialogueID)
@@ -52,19 +52,19 @@ public struct DialogueData
         earnedReward = false;
         rewards = new List<RewardData>(); // TODO CHECK
         nextDialogueID = "";
-        deleteDialogueID = "";
+        deleteDialoguesID = new List<int>();
         isDeleted = false;
 
 
-        id = ParseToInt(_id,"id");
+        id = ParseToInt(_id,"id",id);
         sequenceID = _sequenceID;
-        choicePriority = (_choiceParam != "") ? ParseToInt(_choiceParam, "choicePriority") : 0;
+        choicePriority = (_choiceParam != "") ? ParseToInt(_choiceParam, "choicePriority",id) : 0;
         if (_thoughsParams != "")
         {
             Regex parser = new Regex("_");
             string[] rawData = parser.Split(_thoughsParams);
-            thoughtIndex = ParseToInt(rawData[0], "thoughtIndex");
-            thoughtAnim = ParseToInt(rawData[1], "thoughtAnim");
+            thoughtIndex = ParseToInt(rawData[0], "thoughtIndex",id);
+            thoughtAnim = ParseToInt(rawData[1], "thoughtAnim",id);
         }
         if (_type != "")
         {
@@ -102,7 +102,8 @@ public struct DialogueData
         requiredInput = _requiredInput;
         text = _text;
         specialRef = text.Contains("%") ? true : false; 
-         if (_rewards != "")
+        
+        if (_rewards != "")
         {
             earnedReward = true;
             Regex parser = new Regex("/");
@@ -111,6 +112,7 @@ public struct DialogueData
             {
                 Regex parser2 = new Regex(":");
                 string[] data = parser2.Split(rawData[i]);
+                if (data.Length < 2) Debug.LogError("reward format error for dialogueID = "+ id);
                 string type = data[0].Replace("\"", "");
                 string value = data[1].Replace("\"", "");
                 RewardData reward = new RewardData(type, value);
@@ -119,10 +121,22 @@ public struct DialogueData
         }
         nextDialogueID = _nextDialogueID;
         //failedDialogueID = (_failedDialogueID != "") ? ParseToInt(_failedDialogueID, "failedDialogueID") : -1;
-        deleteDialogueID = _deleteDialogueID;
+        if (_deleteDialogueID != "")
+        {
+            Regex parser = new Regex("/");
+            string[] rawData = parser.Split(_deleteDialogueID);
+            for (int i = 0; i < rawData.Length; i++)
+            {
+                bool parseSuccess = int.TryParse(rawData[i], out int result);
+                if (parseSuccess)
+                {
+                    deleteDialoguesID.Add(result);
+                }
+            }
+        }
     }
 
-    private int ParseToInt(string stringToparse,string id)
+    private int ParseToInt(string stringToparse,string type, int id)
     {
         bool parseSuccess = int.TryParse(stringToparse, out int result);
         if (parseSuccess)
@@ -131,7 +145,7 @@ public struct DialogueData
         }
         else
         {
-            Debug.LogError("Error in parsing to int, "+id+":"+ stringToparse);
+            Debug.LogError("Error in parsing to int :"+ stringToparse + ":"+ type+",id"+id);
             return 0;
         }
     }
