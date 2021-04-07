@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 {
 #pragma warning disable 0649
     #region Dialogue
+    [Header("UI")]
     // visual feedbacks
     [SerializeField] private GameObject feedbackCanDialogue;
     [SerializeField] private GameObject dialogueFinishedFeedback;
@@ -34,6 +35,8 @@ public class GameManager : MonoBehaviour
     private string wrongAnswer;
     private bool canPassNextDialogue = false;
 
+    [SerializeField] private GameObject rewardPanel;
+    [SerializeField] private TMP_Text textReward;
     // ENUM DATA
     public enum DIALOGUETYPE { DIALOGUE, CHOICE_DIALOGUE, CHOICE_ANSWER, THOUGHT };
     private DialogueData currentDialogue;
@@ -55,7 +58,7 @@ public class GameManager : MonoBehaviour
     private string playerName = "";
     [SerializeField] private int playerGold = 120;
     [SerializeField] private TMP_Text playerGoldTxtAmount;
-    private List<string> stackableEventRewards;
+    private List<RewardData> stackableEventRewards;
     [SerializeField] private PlayerController playerController;
     private bool isBookOpen = false;
     private bool hasBook = true;
@@ -83,7 +86,7 @@ public class GameManager : MonoBehaviour
 
         // init var 
         //      dialogues
-        stackableEventRewards = new List<string>();
+        stackableEventRewards = new List<RewardData>();
         TextApparition.onFinishText += this.OnFinishedText;
         answers = new Dictionary<string, DialogueData>();
         //textApparitionScript = GetComponent<TextApparition>();
@@ -173,8 +176,11 @@ public class GameManager : MonoBehaviour
             switch (reward.type)
             {
                 case REWARDTYPE.ITEM:
-                    Debug.LogError("TYPE not recognize ");
-                    // TODO PANEL ITEM
+                    canPassNextDialogue = false;
+                    rewardPanel.SetActive(true);
+                    textReward.text = reward.stringValue;
+                    dialogueFinishedFeedback.SetActive(false);
+                    StartCoroutine("SpaceAndNextSpeech");
                     break;
                 case REWARDTYPE.EVENT:
                     switch (reward.stringValue)
@@ -193,7 +199,7 @@ public class GameManager : MonoBehaviour
                     {
                         case "price_unlocked":
                             merchPricePanel.SetActive(true);
-                            stackableEventRewards.Add("price_unlocked");
+                            stackableEventRewards.Add(reward);
                             break;
                         default:
                             Debug.LogError("STACKABLE_EVENT not recognize " + reward.stringValue);
@@ -207,6 +213,24 @@ public class GameManager : MonoBehaviour
             }
         }
 
+    }
+
+    private IEnumerator SpaceAndNextSpeech()
+    {
+        bool next = false;
+        yield return new WaitForSeconds(0.5f);
+        while (!next)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                next = true;
+                yield return null;
+            }
+        }
+        rewardPanel.SetActive(false);
+        dialogueFinishedFeedback.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        SetNextSpeech();
     }
 
 
@@ -341,7 +365,7 @@ public class GameManager : MonoBehaviour
                         if (playerGold >= ParseToInt(value, dialogueID)) localRequirement = true;
                         break;
                     case "stackable_event":
-                        if (stackableEventRewards.Count > 0 && stackableEventRewards.Contains(value))
+                        if (stackableEventRewards.Count > 0 && stackableEventRewards.Find(x => x.stringValue.Contains(value))!=null)
                             localRequirement = true;
                         else
                             Debug.Log("requirement : missing stackable_event " + value);

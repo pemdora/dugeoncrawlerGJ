@@ -149,7 +149,7 @@ public struct DialogueData
         }
     }
 }
-public struct RewardData
+public class RewardData
 {
     public GameManager.REWARDTYPE type;
     public string stringValue;
