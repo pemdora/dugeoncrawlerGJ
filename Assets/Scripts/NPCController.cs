@@ -13,23 +13,39 @@ public class NPCController : MonoBehaviour
 
     [SerializeField] private Vector2 nextMove;
     [SerializeField] private int health = 100;
-    [SerializeField] private TMP_Text healthTxt;
     [SerializeField] private int npcAttack;
+    [SerializeField] private string npcName;
 
+    private TMP_Text npcHealthTxt;
     // Start is called before the first frame update
     void Start()
     {
         CanDialogue = true;
     }
-    private void UpdateHealth(int valueToAdd)
+    public void UpdateHealth(int valueToAdd)
     {
         health += valueToAdd;
         if (health <= 0)
         {
             health = 0;
-            Debug.LogError("NPC DEAD"); //GAEMAMNGARDEr
+            GameManager.instance.EndCombat();
         }
-        healthTxt.text = health.ToString();
+        npcHealthTxt.text = health.ToString();
+    }
+
+    public string GetName()
+    {
+        return npcName;
+    }
+
+    public int GetStrengh()
+    {
+        return npcAttack;
+    }
+
+    public void StartCombat(TMP_Text _npcHealthTxt)
+    {
+        npcHealthTxt = _npcHealthTxt;
     }
 
     private void Update()

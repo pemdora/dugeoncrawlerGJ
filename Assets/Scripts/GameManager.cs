@@ -72,8 +72,12 @@ public class GameManager : MonoBehaviour
     private int weaponAttack= 0; // TODO redo caca
     [SerializeField] private GameObject bookPanel;
     private bool playerTurn;
+    [Header("NPC Data")]
+    [SerializeField] private TMP_Text npcHealthTxt;
+    [SerializeField] private GameObject npcHealthPanel;
+    private NPCController opponent;
 
-    [Header("DEBUG")]
+     [Header("DEBUG")]
     [SerializeField] private int currentDialogueIndex;
     public static GameManager instance;
 
@@ -108,6 +112,7 @@ public class GameManager : MonoBehaviour
         RewardData rewardData = new RewardData("item", "axe");
         rewards.Add(rewardData);
         currentWeapon = "axe";
+        weaponAttack = 10;
     }
 
     // Update is called once per frame
@@ -242,7 +247,10 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("PNJ ATAACK");
+            int damage = -opponent.GetStrengh();
+            string name = opponent.GetName();
+            UpdatePlayerHealth(damage);
+            textApparitionScript.DisplayText(pnjTxt, "Hit you");
         }
     }
 
@@ -269,6 +277,7 @@ public class GameManager : MonoBehaviour
                         weaponAttack = 20;
                         currentWeapon = textData;
                     }
+                    Debug.Log("currentWeaponcurrentWeaponcurrentWeaponcurrentWeapon");
                     dialogueFinishedFeedback.SetActive(false);
                     StartCoroutine("SpaceAndNextSpeech");
                     break;
@@ -281,9 +290,22 @@ public class GameManager : MonoBehaviour
                             break;
                         case "combat":
                             // START COMBAT
-                            eventType = EVENTTYPE.combat;
+
+                            opponent = interactableObject.GetComponent<NPCController>();
+                            if (opponent)
+                            {
+                                opponent.StartCombat(npcHealthTxt);
+                            }
+
+                            playerTxt.text = "";
+                            pnjTxt.text = "";
+
                             playerTurn = true;
                             playerState = PLAYERSTATE.IN_COMBAT;
+                            eventType = EVENTTYPE.combat;
+
+                            npcHealthPanel.SetActive(true);
+
                             // init choice panels
                             dialogueFinishedFeedback.SetActive(false);
                             SetInputField(true);
@@ -358,6 +380,14 @@ public class GameManager : MonoBehaviour
             }
         }
 
+    }
+
+    // END COMBAT
+    public void EndCombat()
+    {
+        npcHealthPanel.SetActive(false);
+        opponent = null;
+        Debug.Log("NPC DEAD");
     }
 
     private IEnumerator SpaceAndNextSpeech()
@@ -619,17 +649,16 @@ public class GameManager : MonoBehaviour
                 case EVENTTYPE.combat:
                     string answer = (inputField.text).ToLower();
                     answer = answer.Trim(); // Remove white space before and after / Replace(" ", "");
-                    if (answers.ContainsKey(answer))
+                    if (answers.ContainsKey(answer) && IsRequirementsOk(answers[answer].requirements, answers[answer].id))
                     {
                         // input validated
                         DialogueData dialogData = answers[answer];
-                        Debug.Log("dialogData"+ dialogData.text);
                         if (dialogData.rewards.Count > 0)
                         {
-                            var res = dialogData.rewards[0];
-                            Debug.Log("" + dialogData.rewards);
+                            RewardData res = dialogData.rewards[0];
                         }
                         textApparitionScript.DisplayText(playerTxt, dialogData.text);
+                        interactableObject.GetComponent<NPCController>().UpdateHealth(-weaponAttack);
                         playerTurn = false;
 
                         canPassNextDialogue = false;
