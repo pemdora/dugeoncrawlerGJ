@@ -859,27 +859,29 @@ public class GameManager : MonoBehaviour
         interactableNextState = PLAYERSTATE.IN_EXPLORATION;
     }
 
-
     public void StartInteraction()
     {
-        feedbackCanDialogue.SetActive(false);
-        playerState = interactableNextState;
-        switch (playerState)
+        if (playerController.CanMove) // Plyaer is in idle state
         {
-            case PLAYERSTATE.IN_DIALOGUE:
-                if (interactableObject.GetComponent<NPCController>().CanDialogue)
-                {
-                    playerController.CanMove = false;
-                    int index = interactableObject.GetComponent<NPCController>().dialogueID;
-                    StartDialogue(index);
-                }
-                break;
-            case PLAYERSTATE.IN_EXPLORATION:
-                playerController.CanMove = true;
-                break;
-            default:
-                Debug.LogError("Missing PLAYERSTATE INTERACTION");
-                break;
+            feedbackCanDialogue.SetActive(false);
+            playerState = interactableNextState;
+            switch (playerState)
+            {
+                case PLAYERSTATE.IN_DIALOGUE:
+                    if (interactableObject.GetComponent<NPCController>().CanDialogue)
+                    {
+                        playerController.CanMove = false;
+                        int index = interactableObject.GetComponent<NPCController>().dialogueID;
+                        StartDialogue(index);
+                    }
+                    break;
+                case PLAYERSTATE.IN_EXPLORATION:
+                    playerController.CanMove = true;
+                    break;
+                default:
+                    Debug.LogError("Missing PLAYERSTATE INTERACTION");
+                    break;
+            }
         }
     }
 

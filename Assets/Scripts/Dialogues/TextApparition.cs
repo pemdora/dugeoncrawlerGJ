@@ -13,10 +13,10 @@ public class TextApparition : MonoBehaviour
     public delegate void Delegate();
     public static event Delegate onFinishText;
     [Header("DEBUG")]
+    private const float defaultScrollSpeed=0.03f;
     [SerializeField] private bool fastScrollDebug;
 
-
-    public void DisplayText(TMP_Text _uiText, string strComplete,float time= 0F)
+    public void DisplayText(TMP_Text _uiText, string strComplete,float time= defaultScrollSpeed)
     {
         if (_uiText == null)
         {
@@ -24,6 +24,7 @@ public class TextApparition : MonoBehaviour
             return;
         }
         uiText = _uiText;
+        time = time == -1 ? defaultScrollSpeed : time;
         if (textScrollCoroutine == null)
         {
             textScrollCoroutine = AnimateText(strComplete, time);

@@ -42,7 +42,7 @@ public class DialogueData // => need to change data at runtime
         thoughtIndex = -1;
         thoughtAnim = -1;
         delay = 0;
-        scrollDelay = 0.01f;
+        scrollDelay = -1;
         speakerID = "";
         speakerName = "";
         requirements = ""; 
@@ -95,7 +95,7 @@ public class DialogueData // => need to change data at runtime
             Debug.LogError("Missing dialogue type for id =" + _id);
         }
         delay = (_delay != "") ? ParseToFloat(_delay, "delay"):0;
-        scrollDelay = (_scrollDelay != "") ? ParseToFloat(_scrollDelay, "scrollDelay") : 0.07f;
+        scrollDelay = (_scrollDelay != "") ? ParseToFloat(_scrollDelay, "scrollDelay") : scrollDelay;
         speakerID = _speakerID;
         speakerName = _speakerName;
         requirements = _requirements;
