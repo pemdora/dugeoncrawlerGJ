@@ -10,7 +10,7 @@ public class DialogueData // => need to change data at runtime
 #pragma warning disable 0649
     public int id;
     public string sequenceID;
-    public GameManager.DIALOGUETYPE type;
+    public DialoguesManager.DIALOGUETYPE type;
 
     public int choicePriority; // highest is more important
     public int thoughtIndex;
@@ -37,7 +37,7 @@ public class DialogueData // => need to change data at runtime
         // default data
         id = 0;
         sequenceID = "";
-        type = GameManager.DIALOGUETYPE.DIALOGUE;
+        type = DialoguesManager.DIALOGUETYPE.DIALOGUE;
         choicePriority = 0;
         thoughtIndex = -1;
         thoughtAnim = -1;
@@ -74,16 +74,16 @@ public class DialogueData // => need to change data at runtime
             switch (_type)
             {
                 case "Dialogue":
-                    type = GameManager.DIALOGUETYPE.DIALOGUE;
+                    type = DialoguesManager.DIALOGUETYPE.DIALOGUE;
                     break;
                 case "Choice_Dialogue":
-                    type = GameManager.DIALOGUETYPE.CHOICE_DIALOGUE;
+                    type = DialoguesManager.DIALOGUETYPE.CHOICE_DIALOGUE;
                     break;
                 case "Choice_Answer":
-                    type = GameManager.DIALOGUETYPE.CHOICE_ANSWER;
+                    type = DialoguesManager.DIALOGUETYPE.CHOICE_ANSWER;
                     break;
                 case "Thought":
-                    type = GameManager.DIALOGUETYPE.THOUGHT;
+                    type = DialoguesManager.DIALOGUETYPE.THOUGHT;
                     break;
                 default:
                     Debug.LogError("Type not recognize " + _id);
@@ -161,34 +161,5 @@ public class DialogueData // => need to change data at runtime
             Debug.LogError("Error in parsing to float, " + id + ":" + stringToparse);
             return 0;
         }
-    }
-}
-public class RewardData
-{
-    public GameManager.REWARDTYPE type;
-    public string stringValue;
-
-    public RewardData(string _type, string _rewardName)
-    {
-        type = GameManager.REWARDTYPE.ITEM;
-        switch (_type)
-        {
-            case "event":
-                type = GameManager.REWARDTYPE.EVENT;
-                break;
-            case "item":
-                type = GameManager.REWARDTYPE.ITEM;
-                break;
-            case "gold":
-                type = GameManager.REWARDTYPE.GOLD;
-                break;
-            case "stackable_event":
-                type = GameManager.REWARDTYPE.STACKABLE_EVENT;
-                break; 
-            default:
-                Debug.LogError("Reward Type "+ _type + " not recognize ");
-                break;
-        }
-        stringValue = _rewardName;
     }
 }

@@ -51,7 +51,7 @@ public class NPCController : MonoBehaviour
         return npcAttack;
     }
 
-    public void StartCombat(TMP_Text _npcHealthTxt)
+    public void InitCombat(TMP_Text _npcHealthTxt)
     {
         npcHealthTxt = _npcHealthTxt;
     }

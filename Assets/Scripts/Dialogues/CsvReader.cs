@@ -7,7 +7,7 @@ using System.Collections;
 public class CsvReader : MonoBehaviour
 {
 #pragma warning disable 0649
-    public void InitCsvParser(GameManager manager)
+    public void InitCsvParser(DialoguesManager manager)
     {
         //Get the path of the Game data folder
         //string m_Path = Application.dataPath + "/Resources/dialogues.tsv";
@@ -24,7 +24,7 @@ public class CsvReader : MonoBehaviour
         StartCoroutine(loadStreamingAsset(1, "1_bazog_dialogues.tsv", manager));
     }
 
-    IEnumerator loadStreamingAsset(int index,string fileName, GameManager manager)
+    IEnumerator loadStreamingAsset(int index,string fileName, DialoguesManager manager)
     {
         string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, fileName);
 
@@ -41,7 +41,7 @@ public class CsvReader : MonoBehaviour
         ReadDialogues(index,manager, result);
     }
 
-    private void ReadDialogues(int index, GameManager manager, string fileInText)
+    private void ReadDialogues(int index, DialoguesManager manager, string fileInText)
     {
         // initData
         List<DialogueData> dialoguesData = new List<DialogueData>();
