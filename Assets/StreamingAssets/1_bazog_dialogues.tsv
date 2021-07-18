@@ -1,23 +1,23 @@
 ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought anim index	Text Delay	Text scroll delay	Speaker ID	SpeakerName	"Requirements (type:name/amount;type:name/amount)"	Required Input	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
 0		Dialogue	1				Guard_1	Orc	item:axe		<b>NO WEAPONS ALLOWED PREPARED TO FIGHT</b>	event:combat	-1	
-1		Choice_Dialogue					Guard_1	Orc			You seem shady. what are you up to ?		G_0	
-2	G_0	Thought		0_0					item:sword_cane		Start <color=red>fight</color> ?			
-3	G_0	Choice_Answer							item:sword_cane	fight	I want you to DIE !	event:combat	-1	
-4	G_0	Thought		1_0	1						<color=red>Speak</color> with him			
-5	G_0	Choice_Answer								speak	Hi ! I'm just here to visit		6	
-6		Dialogue					Guard_1	Orc			Oh all right ! I thought you was going to loot the dungeon<br>And kills some colleagues.		7	
-7		Dialogue									I would never do this !		8	
+1		Choice_Dialogue					Guard_1	Orc			You seem shady. what are you up to?		C_0	
+2	C_0	Thought		0_0					item:sword_cane		Start <color=red>fight</color>?			
+3	C_0	Choice_Answer							item:sword_cane	fight	I want you to DIE!	event:combat	-1	
+4	C_0	Thought		1_0	1						<color=red>Speak</color> with him			
+5	C_0	Choice_Answer								speak	Hi! I'm just here to visit		6	
+6		Dialogue					Guard_1	Orc			Oh all right! I thought you was going to loot the dungeon<br>And kills some colleagues.		7	
+7		Dialogue									I would never do this!		8	
 8		Dialogue					Guard_1	Orc			You know I have a hard job, staying here all day...		9	
 9		Dialogue									I believe you		10	
-10		Dialogue					Guard_1	Orc			You know what I would really love ?<br>A big cup of coffee !		11	
+10		Dialogue					Guard_1	Orc			You know what I would really love?<br>A big cup of coffee!		11	
 11		Dialogue									I'll bring you a cup if I found one		12	
-12		Dialogue					Guard_1	Orc			Oh you are such a sweetheart ! You seems to be a good person. I let you pass.		13	
-13		Dialogue									Thank you !		14	
-14		Dialogue					Guard_1	Orc			But behave yourself !		15	
-15		Dialogue									Don't worry ! Bye ! (so naive....)		-1	
-16	Wrong_Input	Dialogue									Huh ?			
-17	G_COMBAT	Thought		0_0							<color=red>Hit</color> ?			
-18	G_COMBAT	Thought		1_0							Use <color=red>Potion</color> ?			
-19	G_COMBAT	Choice_Answer							item:axe	hit	Use axe	event:hit		
-20	G_COMBAT	Choice_Answer							item:sword_cane	potion	Heal	event:heal		
-21	G_COMBAT	Choice_Answer							item:sword_cane	attack	Use sword cane			
+12		Dialogue					Guard_1	Orc			Oh you are such a sweetheart! You seems to be a good person.<br>I let you pass.		13	
+13		Dialogue									Thank you!		14	
+14		Dialogue					Guard_1	Orc			But behave yourself!<br>And last tips you should use your book to continue!		15	
+15		Dialogue									Don't worry! Bye! (so naive....)		-1	
+16	Wrong_Input	Dialogue									Huh?			
+17	G_COMBAT	Thought		0_0							<color=red>Hit</color>?			
+18	G_COMBAT	Thought		1_0					item:potion		Use <color=red>Potion</color>?			
+19	G_COMBAT	Choice_Answer							item:axe	hit	You use an axe.	event:hit		
+20	G_COMBAT	Choice_Answer							item:potion	potion	You use a potion.	event:heal		
+21	G_COMBAT	Choice_Answer							item:sword_cane	hit	You use a sword cane.	event:hit		

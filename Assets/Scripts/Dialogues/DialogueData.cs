@@ -86,7 +86,7 @@ public class DialogueData // => need to change data at runtime
                     type = DialoguesManager.DIALOGUETYPE.THOUGHT;
                     break;
                 default:
-                    Debug.LogError("Type not recognize " + _id);
+                    Debug.LogError("Type not recognize "+ _type + " for "+ _id +" "  +text);
                     break;
             }
         }

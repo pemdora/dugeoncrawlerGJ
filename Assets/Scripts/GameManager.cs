@@ -82,11 +82,23 @@ public class GameManager : MonoBehaviour
         SoundManager.Instance.PlayMusic(lvl1Music, true);
         rewards = new List<RewardData>();
 
-
         dialoguesManager.Init();
 
         // player data
         playerGoldTxtAmount.text = playerGold.ToString();
+
+        Test();
+    }
+
+    //TEST
+    private void Test()
+    {
+        RewardData rewardData = new RewardData("item", "sword_cane");
+        rewards.Add(rewardData);
+        ProcessRewardData(rewardData);
+        RewardData rewardData2 = new RewardData("item", "potion");
+        rewards.Add(rewardData2);
+        ProcessRewardData(rewardData2);
     }
 
     // Update is called once per frame
@@ -201,6 +213,7 @@ public class GameManager : MonoBehaviour
         playerGold += valueToAdd;
         playerGoldTxtAmount.text = playerGold.ToString();
     }
+
     private void UpdatePlayerHealth(int valueToAdd)
     {
         playerHealth += valueToAdd;
@@ -269,26 +282,31 @@ public class GameManager : MonoBehaviour
 
                     dialoguesManager.canPassNextDialogue = false;
                     dialoguesManager.dialogueFinishedFeedback.SetActive(false);
-                    
+
                     if (dialoguesManager.answers.ContainsKey(answer) && IsRequirementsOk(dialoguesManager.answers[answer].requirements, dialoguesManager.answers[answer].id))
                     {
-                        // input validated
                         DialogueData dialogData = dialoguesManager.answers[answer];
-                        dialoguesManager.DisplayPlayerText(dialogData.text);
-
-                        //if (dialogData.rewards.Count > 0)
-                        //{
-                        //    RewardData res = dialogData.rewards[0];
-                        //}
-
+                        string displayTxt = dialogData.text;
+                        // [CLEAN TODO] fonction Use item
                         if (answer == "hit")
                         {
                             interactableObject.GetComponent<NPCController>().UpdateHealth(-weaponAttack);
+                            displayTxt += " "+ weaponAttack + " damages dealt.";
                         }
-                        else if (answer == "potion")
+                        else if (answer == "potion") 
                         {
-                            interactableObject.GetComponent<NPCController>().UpdateHealth(10);
+                            RewardData potion = rewards.Find(x => x.stringValue.Contains("potion"));
+                            if (potion != null)
+                            {
+                                rewards.Remove(potion);
+                                UpdatePlayerHealth(20);
+                                displayTxt += " 20 HP restored.";
+                            }
+                            else
+                                Debug.LogError("Missing potion");
                         }
+
+                        dialoguesManager.DisplayPlayerText(displayTxt);
 
                         // close input panel
                         dialoguesManager.SetInputField(false);
@@ -383,8 +401,6 @@ public class GameManager : MonoBehaviour
                     case "stackable_event":
                         if (rewards.Count > 0 && rewards.Find(x => x.stringValue.Contains(value)) != null)
                             localRequirement = true;
-                        else
-                            Debug.Log("requirement : missing stackable_event " + value);
                         break;
                     case "item":
                         if (rewards.Count > 0 && rewards.Find(x => x.stringValue.Contains(value)) != null)
@@ -405,34 +421,19 @@ public class GameManager : MonoBehaviour
         return result;
     }
 
-    public void SetReward(List<RewardData> rewardDataL)
+    public void SetReward(List<RewardData> rewardDataList)
     {
-        foreach (RewardData reward in rewardDataL)
+        foreach (RewardData reward in rewardDataList)
         {
             switch (reward.type)
             {
                 case REWARDTYPE.ITEM:
-                    rewards.Add(reward);
                     dialoguesManager.canPassNextDialogue = false;
                     rewardPanel.SetActive(true);
-                    string textData = reward.stringValue.Replace("_", " ");
-                    textReward.text = textData;
-                    // TODO change
-                    if (reward.stringValue == "axe")
-                    {
-                        weaponAttack = 10;
-                        currentWeapon = textData;
-                    }
-                    else if (reward.stringValue == "sword_cane")
-                    {
-                        weaponAttack = 20;
-                        currentWeapon = textData;
-                    }
-                    else if (reward.stringValue == "book")
-                    {
-                        hasBook = true;
-                        bookFeedbacks.SetActive(true);
-                    }
+
+                    rewards.Add(reward);
+                    ProcessRewardData(reward);
+
                     dialoguesManager.dialogueFinishedFeedback.SetActive(false);
                     dialoguesManager.WaitSpaceAndSetNextSpeech();
 
@@ -446,7 +447,6 @@ public class GameManager : MonoBehaviour
                             break;
                         case "combat":
                             // START COMBAT
-
                             opponent = interactableObject.GetComponent<NPCController>();
                             if (opponent)
                             {
@@ -490,6 +490,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ProcessRewardData(RewardData reward)
+    {
+        string textData = reward.stringValue.Replace("_", " ");
+        textReward.text = textData;
+
+        // TODO change
+        if (reward.stringValue == "axe")
+        {
+            weaponAttack = 10;
+            currentWeapon = textData;
+        }
+        else if (reward.stringValue == "sword_cane")
+        {
+            weaponAttack = 20;
+            currentWeapon = textData;
+        }
+        else if (reward.stringValue == "book")
+        {
+            hasBook = true;
+            bookFeedbacks.SetActive(true);
+        }
+    }
+
+
    public void ActiveRewardPanel(bool setActive)
     {
         rewardPanel.SetActive(setActive);
@@ -512,7 +536,7 @@ public class GameManager : MonoBehaviour
     }
 }
 
-public class RewardData
+public class RewardData // [CLEAN] Should be nullable struct
 {
     public GameManager.REWARDTYPE type;
     public string stringValue;
@@ -539,5 +563,6 @@ public class RewardData
                 break;
         }
         stringValue = _rewardName;
+        GameManager.instance.ProcessRewardData(this);
     }
 }

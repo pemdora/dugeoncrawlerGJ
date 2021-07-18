@@ -1,43 +1,44 @@
 ID	SequenceID	Type of dialogue	Choice Answer Priority	Thought index : Thought anim index	Text Delay	Text scroll delay	Speaker ID	SpeakerName	"Requirements (type:name/amount;type:name/amount)"	Required Input	Text	Reward (type:name/amount)	Next DialogueID	Delete DialogueID
-0		Choice_Dialogue					Seller_1	Jeff the merchant			Hey you !<br>I've never seen your face around !<br>Are you new to this area ?		G_0	
-1	G_0	Thought		0_0							Type <color=red>yes</color> or <color=red>no</color>			
-2	G_0	Choice_Answer								yes	Yes		4	
-3	G_0	Choice_Answer								no	No		4	
-4		Dialogue					Seller_1	Jeff the merchant			Are you a dungeon crawler ? What's your name ?	event:player_name	5	
+0		Choice_Dialogue					Seller_1	Jeff the merchant			Hey you !<br>I've never seen your face around !<br>Are you new to this area?		C_0	
+1	C_0	Thought		0_0							Type <color=red>yes</color> or <color=red>no</color>			
+2	C_0	Choice_Answer								yes	Yes		4	
+3	C_0	Choice_Answer								no	No		4	
+4		Dialogue					Seller_1	Jeff the merchant			Are you a dungeon crawler? What's your name?	event:player_name	5	
 5		Dialogue					Seller_1	Jeff the merchant			All right %player_name%, my name is Jeff and you'll need equiments first		6	
-6		Choice_Dialogue					Seller_1	Jeff the merchant			Come and have a look to my items !		G_1	
-7	G_1	Thought		0_0	0						I REALLY need this <color=red>book</color>			
-8	G_1	Choice_Answer								book	I want to buy this book		9	
-9		Choice_Dialogue					Seller_1	Jeff the merchant			Fine, this guide book cost 30		G_2	
-10	G_2	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
-11	G_2	Choice_Answer			0.25					yes	Ok i'll buy it		18	
-12	G_2	Choice_Answer	1		0.25				gold:30	yes	Ok i'll buy it	item:book/gold:-30	19	7/8/9/10/11/12/13/14/15/16/17
-13	G_2	Choice_Answer			0.25					no	No, it looks like crap		19	
-14	G_2	Thought		1_1					stackable_event:price_unlocked		But the displayed <color=red>price</color> said it's 20			
-15	G_2	Choice_Answer							stackable_event:price_unlocked	price	Hey ! it's displayed 20 gold !		16	
-16		Choice_Dialogue					Seller_1	Jeff the merchant			Oh my bad ! You are right it's 20 do you buy it ?		G_2	12
-17	G_2	Choice_Answer	2						gold:20/stackable_event:price_unlocked	yes	Gimme	item:book/gold:-20	19	16/17/7/8/9/10/11/12/13/14
-18		Choice_Dialogue					Seller_1	Jeff the merchant			Who do you think I am? Are you trying to steal from me?		G_1	
-19		Choice_Dialogue					Seller_1	Jeff the merchant			Wanna buy something else ?		G_1	
-20	G_1	Thought		3_1	3						How <color=red>much</color> does it cost ?			
-21	G_1	Choice_Answer								much	How much for these ?		22	
-22		Choice_Dialogue					Seller_1	Jeff the merchant			Right I'll display prices	stackable_event:price_unlocked	G_1	20/21/22
-23	G_1	Thought		1_2	1						Oh what a nice <color=red>axe</color> !			
-24	G_1	Choice_Answer								axe	I want to buy this axe		25	
-25	G_1	Choice_Dialogue					Seller_1	Jeff the merchant			Nice choice, this sturdy axe costs 40		G_3	
-26	G_3	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
-27	G_3	Choice_Answer								yes	Yes		18	
-28	G_3	Choice_Answer	1						gold:40	yes	Yes	item:axe/gold:-40	19	23/24/25/26/27/28/29
-29	G_3	Choice_Answer								no	No		19	
-30	G_1	Thought		2_0	2						Is that a <color=red>sword</color> cane ?			
-31	G_1	Choice_Answer								sword	How much for that sword cane ?		32	
-32		Choice_Dialogue					Seller_1	Jeff the merchant			Oh ! You know how to distinguish good things, it's 60		G_4	
-33	G_4	Thought		0_0							<color=red>yes</color> or <color=red>no</color> ?			
-34	G_4	Choice_Answer								yes	Yes		18	
-35	G_4	Choice_Answer	1						gold:60	yes	Yes	item:sword_cane/gold:-60	19	30/31/32/33/34/35/36
-36	G_4	Choice_Answer								no	No		19	
-37	G_1	Thought		0_2					item:book		<color=red>Leave</color> ?			
-38	G_1	Choice_Answer							item:book	leave	Goodbye		39	
-39		Dialogue					Seller_1	Jeff the merchant			Thank you for your purchases !<br> Wait ! I'll give you 1 free potion !	item:health_potion	40	
-40		Dialogue									Oh that's nice, thank you !<br>Bye !		-1	
+6		Choice_Dialogue					Seller_1	Jeff the merchant			Come and have a look to my items!		C_1	
+7	C_1	Thought		0_0	0						I REALLY need this <color=red>book</color>			
+8	C_1	Choice_Answer								book	I want to buy this book		A_1	
+9	A_1	Choice_Dialogue					Seller_1	Jeff the merchant			Fine, this guide book cost 30		C_2	
+10	C_2	Thought		0_0							<color=red>yes</color> or <color=red>no</color>?			
+11	C_2	Choice_Answer			0.25					yes	Ok i'll buy it		19	
+12	C_2	Choice_Answer	1		0.25				gold:30	yes	Ok i'll buy it	item:book/gold:-30	20	7/8/9/10/11/12/13/14/15/16/17/18
+13	C_2	Choice_Answer			0.25					no	No, it looks like crap		20	
+14	C_2	Thought		1_1					stackable_event:price_unlocked		But the displayed <color=red>price</color> said it's 20			
+15	C_2	Choice_Answer							stackable_event:price_unlocked	price	Hey ! it's displayed 20 gold!		17	
+16	A_1	Choice_Dialogue					Seller_1	Jeff the merchant			It costs 20 do you buy it?		C_2	
+17		Choice_Dialogue					Seller_1	Jeff the merchant			Oh my bad !<br>You are right it's 20 do you buy it?		C_2	9/14/15
+18	C_2	Choice_Answer	2						gold:20/stackable_event:price_unlocked	yes	Gimme	item:book/gold:-20	20	17/18/7/8/9/10/11/12/13/14
+19		Choice_Dialogue					Seller_1	Jeff the merchant			Who do you think I am? Are you trying to steal from me?		C_1	
+20		Choice_Dialogue					Seller_1	Jeff the merchant			Wanna buy something else?		C_1	
+21	C_1	Thought		3_1	3						How <color=red>much</color> does it cost?			
+22	C_1	Choice_Answer								much	How much for these?		23	
+23		Choice_Dialogue					Seller_1	Jeff the merchant			Right I'll display prices	stackable_event:price_unlocked	C_1	21/22/23
+24	C_1	Thought		1_2	1						Oh what a nice <color=red>axe</color>!			
+25	C_1	Choice_Answer								axe	I want to buy this axe		26	
+26	C_1	Choice_Dialogue					Seller_1	Jeff the merchant			Nice choice, this sturdy axe costs 40		C_3	
+27	C_3	Thought		0_0							<color=red>yes</color> or <color=red>no</color>?			
+28	C_3	Choice_Answer								yes	Yes		19	
+29	C_3	Choice_Answer	1						gold:40	yes	Yes	item:axe/gold:-40	20	24/25/26/27/28/29/30
+30	C_3	Choice_Answer								no	No		20	
+31	C_1	Thought		2_0	2						Is that a <color=red>sword</color> cane?			
+32	C_1	Choice_Answer								sword	How much for that sword cane?		33	
+33		Choice_Dialogue					Seller_1	Jeff the merchant			Oh ! You know how to distinguish good things, it's 60		C_4	
+34	C_4	Thought		0_0							<color=red>yes</color> or <color=red>no</color>?			
+35	C_4	Choice_Answer								yes	Yes		19	
+36	C_4	Choice_Answer	1						gold:60	yes	Yes	item:sword_cane/gold:-60	20	31/32/33/34/35/36/37
+37	C_4	Choice_Answer								no	No		20	
+38	C_1	Thought		0_2					item:book		<color=red>Leave</color>?			
+39	C_1	Choice_Answer							item:book	leave	Goodbye		40	
+40		Dialogue					Seller_1	Jeff the merchant			Thank you for your purchases!<br> Wait! I'll give you 1 free potion!	item:health_potion	41	
+41		Dialogue									Oh that's nice, thank you!<br>Bye!		-1	
 -1	Wrong_Input	Dialogue					Seller_1	Jeff the merchant			I don't understand			

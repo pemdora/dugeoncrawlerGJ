@@ -145,6 +145,8 @@ public class DialoguesManager : MonoBehaviour
                 answers.Clear();
 
                 IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == currentDialogue.nextDialogueID);
+
+                // TODO move it in INIT
                 // wrong answer text
                 IEnumerable<DialogueData> query2 = dialoguesData.Where(dialogueData => dialogueData.sequenceID == "Wrong_Input");
                 if (query2.Count() > 0)
@@ -169,22 +171,7 @@ public class DialoguesManager : MonoBehaviour
                         }
                         else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
                         {
-                            // only add if requirements meets
-                            bool keyExists = answers.ContainsKey(entry.requiredInput);
-                            if (keyExists)
-                            {
-                                DialogueData oldValue = answers[entry.requiredInput];
-                                DialogueData newValue = entry;
-                                if (newValue.choicePriority > oldValue.choicePriority && GameManager.instance.IsRequirementsOk(newValue.requirements, newValue.id))
-                                {
-                                    answers[entry.requiredInput] = newValue;
-                                }
-                            }
-                            else
-                            {
-                                answers.Add(entry.requiredInput, entry);
-                            }
-
+                            ProcessChoiceAnswer(entry);
                         }
                     }
                 }
@@ -212,6 +199,7 @@ public class DialoguesManager : MonoBehaviour
         foreach (int dialogueID in currentDialogue.deleteDialoguesID)
         {
             dialoguesData[dialogueID].isDeleted = true;
+            Debug.Log("Deleted" + dialogueID);
         }
 
     }
@@ -248,23 +236,29 @@ public class DialoguesManager : MonoBehaviour
                 }
                 else if (entry.type == DIALOGUETYPE.CHOICE_ANSWER)
                 {
-                    // only add if requirements meets
-                    bool keyExists = answers.ContainsKey(entry.requiredInput);
-                    if (keyExists)
-                    {
-                        DialogueData oldValue = answers[entry.requiredInput];
-                        DialogueData newValue = entry;
-                        if (newValue.choicePriority > oldValue.choicePriority && GameManager.instance.IsRequirementsOk(newValue.requirements, newValue.id))
-                        {
-                            answers[entry.requiredInput] = newValue;
-                        }
-                    }
-                    else
-                    {
-                        answers.Add(entry.requiredInput, entry);
-                    }
+                    ProcessChoiceAnswer(entry);
                 }
             }
+        }
+    }
+
+    private void ProcessChoiceAnswer(DialogueData entry)
+    {
+        // only add if requirements meets
+        bool keyExists = answers.ContainsKey(entry.requiredInput);
+        if (keyExists)
+        {
+            DialogueData oldValue = answers[entry.requiredInput];
+            DialogueData newValue = entry;
+            if (newValue.choicePriority > oldValue.choicePriority && GameManager.instance.IsRequirementsOk(newValue.requirements, newValue.id))
+            {
+                answers[entry.requiredInput] = newValue;
+            }
+        }
+        else
+        {
+            if (GameManager.instance.IsRequirementsOk(entry.requirements, entry.id))
+                answers.Add(entry.requiredInput, entry);
         }
     }
 
@@ -273,7 +267,7 @@ public class DialoguesManager : MonoBehaviour
     public void DisplayEnemyAction(string _name ,int damage)
     {
         playerTxt.text = "";
-        textApparitionScript.DisplayText(pnjTxt, _name + " hit you. You take "+ damage + " damages.");
+        textApparitionScript.DisplayText(pnjTxt, _name + " hit you. You take "+ -damage + " damages.");
     }
 
     public void DisplayPlayerText(string _text)
@@ -339,6 +333,22 @@ public class DialoguesManager : MonoBehaviour
             }
             else
             {
+                IEnumerable<DialogueData> query = dialoguesData.Where(dialogueData => dialogueData.sequenceID == currentDialogue.nextDialogueID);
+
+                foreach (DialogueData entry in query)
+                {
+                    if (entry.isDeleted)
+                    {
+                        Debug.Log(entry.text + " isDeleted");
+                        continue;
+                    }
+                    else
+                    {
+                        SetDialogueIndex(entry.id);
+                        DisplayCurrentText();
+                        return;
+                    }
+                } 
                 Debug.LogError("Error in parsing " + currentDialogue.nextDialogueID + " to int, id = " + currentDialogue.id);
             }
         }
