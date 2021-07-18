@@ -11,9 +11,10 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
 #pragma warning disable 0649
-    [SerializeField] private DialoguesManager dialoguesManager;
+    [SerializeField] private DialoguesManager dialoguesManager; 
+    [SerializeField] private BookManager bookManager; 
 
-    [Header("UI")]
+     [Header("UI")]
     [SerializeField] private GameObject gameOverPanel;
     // Rewards
     [SerializeField] private GameObject rewardPanel;
@@ -21,16 +22,10 @@ public class GameManager : MonoBehaviour
 
     // END DIALOGUES
 
-    [Header("BOOK")]
-    [SerializeField] private Book bookScript;
-    [SerializeField] private GameObject bookInputFieldPanel;
-    [SerializeField] private TMP_InputField inputFieldBook;
-    [SerializeField] private Sprite page6;
-    [SerializeField] private GameObject bookSucess;
-
     [Header("LevelTuto_PNJ1")]
     [SerializeField] private GameObject merchPricePanel;
     public AudioClip lvl1Music;
+    [SerializeField] private DoorController doorController;
 
     public enum PLAYERSTATE { IN_EXPLORATION, IN_DIALOGUE ,IN_COMBAT};
     private PLAYERSTATE playerState;
@@ -49,8 +44,6 @@ public class GameManager : MonoBehaviour
     private bool hasBook = false;
     private string currentWeapon = ""; // TODO redo caca
     private int weaponAttack= 0; // TODO redo caca
-    [SerializeField] private GameObject bookFeedbacks;
-    [SerializeField] private GameObject bookPanel;
 
     private bool playerTurn;
     [Header("NPC Data")]
@@ -119,7 +112,7 @@ public class GameManager : MonoBehaviour
                         dialoguesManager.OnSelectnputField();
                     }
                 }
-                else if (Input.GetKeyDown(KeyCode.B) && hasBook && !dialoguesManager.inputFieldWriting)
+                else if (CanInteractBook(PLAYERSTATE.IN_DIALOGUE))
                 {
                     InteractBook();
                 }
@@ -129,7 +122,7 @@ public class GameManager : MonoBehaviour
                 {
                     StartInteraction();
                 }
-                if (Input.GetKeyDown(KeyCode.B) && hasBook)
+                if (CanInteractBook(PLAYERSTATE.IN_EXPLORATION))
                 {
                     InteractBook();
                 }
@@ -146,7 +139,7 @@ public class GameManager : MonoBehaviour
                         dialoguesManager.OnSelectnputField();
                     }
                 }
-                else if (Input.GetKeyDown(KeyCode.B) && hasBook && !dialoguesManager.inputFieldWriting)
+                else if (CanInteractBook(PLAYERSTATE.IN_COMBAT))
                 {
                     InteractBook();
                 }
@@ -157,29 +150,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void OnFLip()
+    public void BookAnswerSucess(bool isSuccess)
     {
-        if (bookScript.currentPage == 6)
-            bookInputFieldPanel.SetActive(true);
+        if(isSuccess)
+            doorController.OpenDoor();
         else
-            bookInputFieldPanel.SetActive(false);
-    }
-
-    public void AnswerTextBook()
-    {
-        string answer = (inputFieldBook.text).ToLower();
-        answer = answer.Trim();
-        Debug.Log("answer");
-        if (answer == "coffee")
-        {
-            bookScript.bookPages[6] = page6;
-            bookSucess.SetActive(true);
-        }
-        else
-        {
             UpdatePlayerHealth(-5);
-        }
-        inputFieldBook.GetComponent<TMP_InputField>().text = "";
     }
 
     private void SetNextCombatAction() // TODO GAME MANAGER
@@ -279,6 +255,8 @@ public class GameManager : MonoBehaviour
                 case EVENTTYPE.combat:
                     string answer = dialoguesManager.GetInputFieldText().ToLower();
                     answer = answer.Trim(); // Remove white space before and after / Replace(" ", "");
+                    if (answer == "")
+                        return;
 
                     dialoguesManager.canPassNextDialogue = false;
                     dialoguesManager.dialogueFinishedFeedback.SetActive(false);
@@ -509,7 +487,7 @@ public class GameManager : MonoBehaviour
         else if (reward.stringValue == "book")
         {
             hasBook = true;
-            bookFeedbacks.SetActive(true);
+            bookManager.SetWinMessage();
         }
     }
 
@@ -519,10 +497,21 @@ public class GameManager : MonoBehaviour
         rewardPanel.SetActive(setActive);
     }
 
+    private bool CanInteractBook(PLAYERSTATE playerState)
+    {
+        if (playerState == PLAYERSTATE.IN_DIALOGUE)
+            return Input.GetKeyDown(KeyCode.B) && hasBook && !dialoguesManager.inputFieldWriting && !dialoguesManager.inputFieldWriting && !bookManager.bookFieldWriting;
+        else if (playerState == PLAYERSTATE.IN_COMBAT)
+            return Input.GetKeyDown(KeyCode.B) && hasBook && !bookManager.bookFieldWriting;
+        else if (playerState == PLAYERSTATE.IN_EXPLORATION)
+            return Input.GetKeyDown(KeyCode.B) && hasBook && !bookManager.bookFieldWriting;
+        return false;
+    }
+
     private void InteractBook()
     {
         isBookOpen = !isBookOpen;
-        bookPanel.SetActive(isBookOpen);
+        bookManager.gameObject.SetActive(isBookOpen);
         if (isBookOpen)
         {
             if (playerState == PLAYERSTATE.IN_EXPLORATION)
